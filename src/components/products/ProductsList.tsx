@@ -1,7 +1,7 @@
 
 import React from 'react';
 import ProductCard, { Product } from './ProductCard';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Search } from 'lucide-react';
 
 interface ProductsListProps {
   products: Product[];
@@ -19,10 +19,10 @@ const ProductsList: React.FC<ProductsListProps> = ({
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <AlertCircle className="h-12 w-12 text-gray-400 mb-4" />
+        <Search className="h-12 w-12 text-gray-400 mb-4" />
         <h3 className="font-medium text-lg mb-2">No Products Found</h3>
         <p className="text-gray-600 max-w-xs">
-          You don't have any products yet or none match your current filter.
+          No products match your current search or filter criteria. Try adjusting your search terms.
         </p>
       </div>
     );

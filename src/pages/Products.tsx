@@ -12,6 +12,9 @@ const Products: React.FC = () => {
     products,
     searchQuery,
     setSearchQuery,
+    categories,
+    selectedCategory,
+    setSelectedCategory,
     toggleProductStatus,
     handleEditProduct,
     handleDeleteProduct
@@ -27,6 +30,9 @@ const Products: React.FC = () => {
         <ProductsSearch 
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
         />
         
         <ProductsList 

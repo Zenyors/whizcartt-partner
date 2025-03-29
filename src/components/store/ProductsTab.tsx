@@ -15,6 +15,12 @@ const ProductsTab: React.FC<ProductsTabProps> = ({ products }) => {
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
+      
+      {products.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-gray-500">No products available</p>
+        </div>
+      )}
     </TabsContent>
   );
 };

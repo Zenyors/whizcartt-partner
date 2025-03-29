@@ -18,11 +18,23 @@ export function useProducts() {
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>(mockProducts);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   
-  const filteredProducts = products.filter(product => 
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Extract unique categories from products
+  const categories = Array.from(new Set(products.map(product => product.category)));
+  
+  // Filter products by both search query and category
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesCategory = 
+      selectedCategory === 'all' || 
+      product.category === selectedCategory;
+    
+    return matchesSearch && matchesCategory;
+  });
   
   const handleAddProduct = () => {
     navigate('/add-product');
@@ -32,24 +44,30 @@ export function useProducts() {
     setProducts(products.map(product => 
       product.id === id ? { ...product, isActive: !product.isActive } : product
     ));
+    
+    const product = products.find(p => p.id === id);
+    const newStatus = product ? !product.isActive : false;
+    
     toast({
-      title: "Product Updated",
-      description: "Product status has been updated successfully",
+      title: `Product ${newStatus ? 'Activated' : 'Deactivated'}`,
+      description: `${product?.name} has been ${newStatus ? 'activated' : 'deactivated'} successfully`,
     });
   };
   
   const handleEditProduct = (id: number) => {
+    navigate(`/edit-product/${id}`);
     toast({
       title: "Edit Product",
-      description: "This feature will be available soon",
+      description: "Redirecting to edit product page",
     });
   };
   
   const handleDeleteProduct = (id: number) => {
+    const product = products.find(p => p.id === id);
     setProducts(products.filter(product => product.id !== id));
     toast({
       title: "Product Deleted",
-      description: "Product has been deleted successfully",
+      description: `${product?.name} has been deleted successfully`,
     });
   };
 
@@ -57,6 +75,9 @@ export function useProducts() {
     products: filteredProducts,
     searchQuery,
     setSearchQuery,
+    categories,
+    selectedCategory,
+    setSelectedCategory,
     handleAddProduct,
     toggleProductStatus,
     handleEditProduct,

@@ -6,12 +6,12 @@ import { useToast } from './ui/use-toast';
 import ProfileSidebar from './ProfileSidebar';
 
 interface HeaderBarProps {
-  companyName: string;
+  companyName?: string;
   partnerText?: string;
 }
 
 const HeaderBar: React.FC<HeaderBarProps> = ({ 
-  companyName, 
+  companyName = "Whizcartt", 
   partnerText = "Partner" 
 }) => {
   const { toast } = useToast();
@@ -37,7 +37,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
 
   return (
     <>
-      <div className="flex items-center justify-between w-full p-4">
+      <div className="flex items-center justify-between w-full p-4 bg-white shadow-sm">
         <Button 
           variant="ghost" 
           size="icon" 

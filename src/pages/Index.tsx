@@ -24,7 +24,7 @@ const Index: React.FC = () => {
   return (
     <div className="min-h-screen pb-20 bg-gray-50">
       {/* Header with logo and icons */}
-      <HeaderBar companyName="Whizcart" />
+      <HeaderBar companyName="Whizcartt" />
       
       <div className="max-w-md mx-auto px-4 py-4">
         {/* Store status controls */}

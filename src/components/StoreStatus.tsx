@@ -47,9 +47,9 @@ const StoreStatus: React.FC<StoreStatusProps> = ({ initialStatus = false }) => {
   };
 
   return (
-    <div className="px-4 py-4 bg-white rounded-lg shadow-sm mb-4 mx-4">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
+    <div className="bg-white rounded-lg shadow-sm mb-4">
+      <div className="p-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Switch 
               checked={isOnline} 
@@ -61,11 +61,11 @@ const StoreStatus: React.FC<StoreStatusProps> = ({ initialStatus = false }) => {
             </span>
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Button 
               variant="outline" 
               size="sm"
-              className="flex items-center gap-1 text-xs font-normal px-2"
+              className="flex items-center gap-1 text-xs font-normal px-3 py-2"
               onClick={handleViewStore}
             >
               <Store size={16} />
@@ -75,7 +75,7 @@ const StoreStatus: React.FC<StoreStatusProps> = ({ initialStatus = false }) => {
             <Button 
               variant="outline" 
               size="sm"
-              className="flex items-center gap-1 text-xs font-normal px-2"
+              className="flex items-center gap-1 text-xs font-normal px-3 py-2"
               onClick={handleCopyLink}
             >
               <Copy size={16} />

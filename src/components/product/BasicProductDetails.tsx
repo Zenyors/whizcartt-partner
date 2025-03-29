@@ -30,7 +30,7 @@ const BasicProductDetails: React.FC<BasicProductDetailsProps> = ({
     <div className="space-y-6">
       {/* Product Name */}
       <div>
-        <label className="block text-sm font-medium mb-1">Product Name</label>
+        <label className="block text-sm font-semibold mb-1">Product Name</label>
         <Input 
           name="name"
           value={formData.name}
@@ -41,7 +41,7 @@ const BasicProductDetails: React.FC<BasicProductDetailsProps> = ({
 
       {/* Price */}
       <div>
-        <label className="block text-sm font-medium mb-1">Price</label>
+        <label className="block text-sm font-semibold mb-1">Price</label>
         <Input 
           name="price"
           value={formData.price}
@@ -55,7 +55,7 @@ const BasicProductDetails: React.FC<BasicProductDetailsProps> = ({
 
       {/* Stock */}
       <div>
-        <label className="block text-sm font-medium mb-1">Stock</label>
+        <label className="block text-sm font-semibold mb-1">Stock</label>
         <div className="flex items-center">
           <span className="mr-4">{formData.stock} in Stock</span>
           <div className="flex">
@@ -81,7 +81,7 @@ const BasicProductDetails: React.FC<BasicProductDetailsProps> = ({
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium mb-1">Add Product Description</label>
+        <label className="block text-sm font-semibold mb-1">Product Description</label>
         <Textarea 
           name="description"
           value={formData.description}

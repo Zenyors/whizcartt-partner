@@ -34,7 +34,7 @@ const DateTimeSection: React.FC<DateTimeSectionProps> = ({
         className="w-full flex justify-between items-center"
       >
         <div>
-          <h3 className="font-medium text-sm">{title} {value ? `(${value})` : ''}</h3>
+          <h3 className="font-semibold text-sm">{title} {value ? `(${value})` : ''}</h3>
           <p className="text-xs text-gray-500">{description}</p>
         </div>
         <ChevronRight className={`h-5 w-5 transition-transform ${expanded ? 'rotate-90' : ''}`} />

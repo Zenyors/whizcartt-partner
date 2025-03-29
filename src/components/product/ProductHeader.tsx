@@ -20,7 +20,7 @@ const ProductHeader: React.FC<ProductHeaderProps> = ({
       >
         Cancel
       </button>
-      <div className="font-bold text-base">{title}</div>
+      <div className="font-semibold text-base">{title}</div>
       <button 
         className="font-medium"
         onClick={handleSubmit}

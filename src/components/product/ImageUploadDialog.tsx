@@ -1,14 +1,16 @@
 
-import React from 'react';
-import { Camera, ScanBarcode, Image, FileImage, RotateCcw } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
 import { 
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useCamera } from '@/hooks/useCamera';
+import { useBarcodeScanner } from '@/hooks/useBarcodeScanner';
+import CameraView from './CameraView';
+import UploadOptions from './UploadOptions';
 
 interface ImageUploadDialogProps {
   open: boolean;
@@ -24,217 +26,58 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
   onBarcodeDetected
 }) => {
   const { toast } = useToast();
-  const [cameraActive, setCameraActive] = React.useState(false);
-  const [isScanning, setIsScanning] = React.useState(false);
-  const [facingMode, setFacingMode] = React.useState<'user' | 'environment'>('environment');
-  const videoRef = React.useRef<HTMLVideoElement>(null);
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const galleryInputRef = React.useRef<HTMLInputElement>(null);
-  const scanIntervalRef = React.useRef<number | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  
+  // Custom hooks
+  const { 
+    cameraActive, 
+    startCamera, 
+    stopCamera: stopCameraFn, 
+    switchCamera, 
+    captureImage: captureImageFn 
+  } = useCamera();
+  
+  const { 
+    isScanning, 
+    startBarcodeScanner, 
+    stopBarcodeScanner 
+  } = useBarcodeScanner();
 
   // Handle barcode scanning
   const handleScanBarcode = async () => {
     try {
-      // Check if the BarcodeDetector API is available
-      if ('BarcodeDetector' in window) {
-        await startCamera();
-        setCameraActive(true);
-        setIsScanning(true);
-        toast({
-          title: "Barcode Scanner",
-          description: "Point your camera at a barcode",
-        });
-        
-        // Start continuous scanning
-        startContinuousScan();
-      } else {
-        toast({
-          title: "Not supported",
-          description: "Barcode scanning is not supported on this device",
-          variant: "destructive",
-        });
-      }
+      await startCamera(videoRef);
+      startBarcodeScanner(videoRef, canvasRef, onBarcodeDetected, onImageCapture);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to start barcode scanner",
-        variant: "destructive",
-      });
-      console.error("Barcode scanner error:", error);
+      console.error("Failed to start camera for barcode scanning:", error);
     }
-  };
-
-  // Start continuous scanning for barcodes
-  const startContinuousScan = () => {
-    if (scanIntervalRef.current) {
-      clearInterval(scanIntervalRef.current);
-    }
-
-    scanIntervalRef.current = window.setInterval(async () => {
-      if (!videoRef.current || !canvasRef.current || !isScanning) return;
-      
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      
-      // Set canvas size to match video
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-      
-      // Draw current video frame to canvas
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      try {
-        if ('BarcodeDetector' in window) {
-          const barcodeDetector = new (window as any).BarcodeDetector({
-            formats: ['qr_code', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'code_93', 'itf']
-          });
-          
-          const barcodes = await barcodeDetector.detect(canvas);
-          
-          if (barcodes.length > 0) {
-            // Stop scanning when a barcode is found
-            clearInterval(scanIntervalRef.current || 0);
-            scanIntervalRef.current = null;
-            setIsScanning(false);
-            
-            // Draw rectangle around the barcode
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = 'red';
-            ctx.strokeRect(
-              barcodes[0].boundingBox.x,
-              barcodes[0].boundingBox.y,
-              barcodes[0].boundingBox.width,
-              barcodes[0].boundingBox.height
-            );
-            
-            // Get image with the highlighted barcode
-            const imageData = canvas.toDataURL('image/jpeg');
-            onImageCapture(imageData);
-            
-            // Pass the barcode data if callback exists
-            if (onBarcodeDetected) {
-              onBarcodeDetected(barcodes[0]);
-              
-              toast({
-                title: "Barcode detected",
-                description: `Barcode value: ${barcodes[0].rawValue}`,
-              });
-            }
-            
-            setTimeout(() => {
-              stopCamera();
-              onOpenChange(false);
-            }, 1500);
-          }
-        }
-      } catch (error) {
-        console.error("Error scanning barcode:", error);
-      }
-    }, 200); // Scan every 200ms
   };
 
   // Handle camera capture
   const handleUseCamera = async () => {
     try {
-      await startCamera();
-      setCameraActive(true);
-      setIsScanning(false);
+      await startCamera(videoRef);
     } catch (error) {
-      toast({
-        title: "Camera Error",
-        description: "Failed to access camera",
-        variant: "destructive",
-      });
       console.error("Camera error:", error);
     }
   };
 
-  // Start the camera
-  const startCamera = async () => {
-    if (!videoRef.current) return;
-    
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: facingMode }
-      });
-      
-      videoRef.current.srcObject = stream;
-      await videoRef.current.play();
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-      throw error;
-    }
+  // Capture image from camera
+  const captureImage = () => {
+    captureImageFn(videoRef, canvasRef, (imageData) => {
+      onImageCapture(imageData);
+      stopCamera();
+      onOpenChange(false);
+    });
   };
 
   // Stop the camera
   const stopCamera = () => {
-    if (!videoRef.current) return;
-    
-    const stream = videoRef.current.srcObject as MediaStream;
-    if (stream) {
-      const tracks = stream.getTracks();
-      tracks.forEach(track => track.stop());
-      videoRef.current.srcObject = null;
-    }
-    setCameraActive(false);
-    setIsScanning(false);
-    
-    // Clear any ongoing scan interval
-    if (scanIntervalRef.current) {
-      clearInterval(scanIntervalRef.current);
-      scanIntervalRef.current = null;
-    }
-  };
-
-  // Switch camera between front and back
-  const switchCamera = async () => {
-    stopCamera();
-    setFacingMode(prevMode => prevMode === 'user' ? 'environment' : 'user');
-    // Restart camera with new facing mode
-    setTimeout(async () => {
-      await startCamera();
-      // If we were scanning, restart scanning
-      if (isScanning) {
-        startContinuousScan();
-      }
-    }, 300);
-  };
-
-  // Capture image from camera
-  const captureImage = async () => {
-    if (!videoRef.current || !canvasRef.current) return;
-    
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    
-    // Set canvas size to match video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    
-    // Draw video frame to canvas
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    try {
-      // Get image data as base64
-      const imageData = canvas.toDataURL('image/jpeg');
-      onImageCapture(imageData);
-      stopCamera();
-      onOpenChange(false);
-    } catch (error) {
-      console.error("Error capturing image:", error);
-      toast({
-        title: "Error",
-        description: "Failed to capture image",
-        variant: "destructive",
-      });
-    }
+    stopCameraFn(videoRef);
+    stopBarcodeScanner();
   };
 
   // Handle gallery selection
@@ -277,7 +120,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
   };
 
   // Clean up when dialog closes or component unmounts
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open && cameraActive) {
       stopCamera();
     }
@@ -298,100 +141,25 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
         </DialogHeader>
         
         {cameraActive ? (
-          <div className="flex flex-col items-center">
-            <div className="relative w-full aspect-video bg-black rounded-md overflow-hidden">
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                autoPlay
-                playsInline
-                muted
-              />
-              <canvas ref={canvasRef} className="hidden" />
-              
-              <div className="absolute bottom-4 inset-x-0 flex justify-center space-x-4">
-                <Button 
-                  variant="outline" 
-                  onClick={switchCamera}
-                  className="bg-white"
-                >
-                  <RotateCcw className="h-5 w-5" />
-                </Button>
-                <Button 
-                  onClick={captureImage}
-                  className="bg-white text-black hover:bg-gray-100"
-                >
-                  Capture
-                </Button>
-              </div>
-            </div>
-            
-            <Button
-              variant="outline"
-              className="mt-4"
-              onClick={() => {
-                stopCamera();
-                setCameraActive(false);
-              }}
-            >
-              Cancel
-            </Button>
-          </div>
+          <CameraView
+            videoRef={videoRef}
+            canvasRef={canvasRef}
+            switchCamera={switchCamera}
+            captureImage={captureImage}
+            stopCamera={() => {
+              stopCamera();
+            }}
+          />
         ) : (
-          <div className="grid grid-cols-2 gap-4">
-            <Button 
-              variant="outline" 
-              className="flex flex-col items-center justify-center p-6"
-              onClick={handleScanBarcode}
-            >
-              <ScanBarcode className="h-10 w-10 mb-2" />
-              <span>Scan Barcode</span>
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              className="flex flex-col items-center justify-center p-6"
-              onClick={handleUseCamera}
-            >
-              <Camera className="h-10 w-10 mb-2" />
-              <span>Use Camera</span>
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              className="flex flex-col items-center justify-center p-6"
-              onClick={handleGallerySelect}
-            >
-              <Image className="h-10 w-10 mb-2" />
-              <span>From Gallery</span>
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              className="flex flex-col items-center justify-center p-6"
-              onClick={handleFileSelect}
-            >
-              <FileImage className="h-10 w-10 mb-2" />
-              <span>Choose File</span>
-            </Button>
-            
-            <input 
-              type="file"
-              ref={galleryInputRef}
-              className="hidden"
-              accept="image/*"
-              onChange={handleFileInputChange}
-              capture="environment"
-            />
-            
-            <input 
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/*"
-              onChange={handleFileInputChange}
-            />
-          </div>
+          <UploadOptions
+            handleScanBarcode={handleScanBarcode}
+            handleUseCamera={handleUseCamera}
+            handleGallerySelect={handleGallerySelect}
+            handleFileSelect={handleFileSelect}
+            galleryInputRef={galleryInputRef}
+            fileInputRef={fileInputRef}
+            handleFileInputChange={handleFileInputChange}
+          />
         )}
       </DialogContent>
     </Dialog>

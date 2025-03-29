@@ -23,6 +23,7 @@ import StatBox from '@/components/StatBox';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { Label } from '@/components/ui/label';
 
 interface Transaction {
   id: string;
@@ -278,23 +279,23 @@ const Payments: React.FC = () => {
           </AlertDialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <FormLabel>Account Type</FormLabel>
+              <Label htmlFor="account-type">Account Type</Label>
               <div className="flex space-x-2">
                 <Button variant="outline" className="flex-1 bg-blue-50 border-blue-300">Bank Account</Button>
                 <Button variant="outline" className="flex-1">UPI</Button>
               </div>
             </div>
             <div className="space-y-2">
-              <FormLabel>Bank Name</FormLabel>
-              <Input placeholder="Enter bank name" />
+              <Label htmlFor="bank-name">Bank Name</Label>
+              <Input id="bank-name" placeholder="Enter bank name" />
             </div>
             <div className="space-y-2">
-              <FormLabel>Account Number</FormLabel>
-              <Input placeholder="Enter account number" />
+              <Label htmlFor="account-number">Account Number</Label>
+              <Input id="account-number" placeholder="Enter account number" />
             </div>
             <div className="space-y-2">
-              <FormLabel>IFSC Code</FormLabel>
-              <Input placeholder="Enter IFSC code" />
+              <Label htmlFor="ifsc-code">IFSC Code</Label>
+              <Input id="ifsc-code" placeholder="Enter IFSC code" />
             </div>
           </div>
           <AlertDialogFooter>

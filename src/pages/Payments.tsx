@@ -1,12 +1,28 @@
+
 import React, { useState } from 'react';
-import { ArrowLeft, PlusCircle, CreditCard, Download } from 'lucide-react';
+import { ArrowLeft, PlusCircle, CreditCard, Download, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import BottomNav from '@/components/BottomNav';
 import StatBox from '@/components/StatBox';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 interface Transaction {
   id: string;
@@ -25,10 +41,22 @@ const mockTransactions: Transaction[] = [
   { id: 'TRX005', date: '2023-05-01', amount: 100.00, type: 'debit', description: 'Withdrawal', status: 'pending' },
 ];
 
+// Withdrawal form schema
+const withdrawalFormSchema = z.object({
+  amount: z.string()
+    .refine(val => !isNaN(Number(val)), { message: "Amount must be a number" })
+    .refine(val => Number(val) > 0, { message: "Amount must be greater than 0" })
+    .refine(val => Number(val) <= 1000, { message: "Amount must not exceed available balance" })
+    .refine(val => Number(val) >= 500, { message: "Minimum withdrawal amount is ₹500" }),
+  accountNumber: z.string().min(1, { message: "Account number is required" }),
+});
+
 const Payments: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [transactions] = useState<Transaction[]>(mockTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
+  const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
+  const [addPaymentDialogOpen, setAddPaymentDialogOpen] = useState(false);
   
   const totalEarnings = transactions
     .filter(t => t.status === 'completed')
@@ -38,25 +66,54 @@ const Payments: React.FC = () => {
     .filter(t => t.status === 'pending')
     .reduce((sum, t) => sum + (t.type === 'credit' ? t.amount : -t.amount), 0);
   
+  const form = useForm<z.infer<typeof withdrawalFormSchema>>({
+    resolver: zodResolver(withdrawalFormSchema),
+    defaultValues: {
+      amount: "",
+      accountNumber: "",
+    },
+  });
+
   const handleAddPaymentMethod = () => {
-    toast({
-      title: "Add Payment Method",
-      description: "This feature will be available soon",
-    });
+    setAddPaymentDialogOpen(true);
   };
   
   const handleWithdraw = () => {
-    toast({
-      title: "Withdraw Funds",
-      description: "This feature will be available soon",
-    });
+    setWithdrawDialogOpen(true);
   };
   
   const handleDownloadStatement = () => {
+    navigate('/payments/statements');
+  };
+
+  const onWithdrawSubmit = (values: z.infer<typeof withdrawalFormSchema>) => {
+    // Add a new transaction for the withdrawal
+    const newTransaction: Transaction = {
+      id: `TRX${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
+      date: new Date().toISOString().split('T')[0],
+      amount: Number(values.amount),
+      type: 'debit',
+      description: 'Withdrawal to Account',
+      status: 'pending',
+    };
+    
+    setTransactions([newTransaction, ...transactions]);
+    
     toast({
-      title: "Download Statement",
-      description: "Your statement will be downloaded shortly",
+      title: "Withdrawal Requested",
+      description: `₹${values.amount} withdrawal has been initiated and will be processed within 2-3 business days.`,
     });
+    
+    setWithdrawDialogOpen(false);
+    form.reset();
+  };
+
+  const handleAddNewCard = () => {
+    toast({
+      title: "Payment Method Added",
+      description: "Your new payment method has been successfully added.",
+    });
+    setAddPaymentDialogOpen(false);
   };
 
   return (
@@ -85,7 +142,11 @@ const Payments: React.FC = () => {
             </div>
             
             <div className="flex space-x-3 mt-4">
-              <Button className="flex-1" onClick={handleWithdraw}>
+              <Button 
+                className="flex-1" 
+                onClick={handleWithdraw}
+                disabled={totalEarnings < 500}
+              >
                 Withdraw Funds
               </Button>
               <Button variant="outline" className="flex-1" onClick={handleDownloadStatement}>
@@ -93,6 +154,12 @@ const Payments: React.FC = () => {
                 Statement
               </Button>
             </div>
+            {totalEarnings < 500 && (
+              <div className="flex items-center mt-2 text-amber-600 text-sm">
+                <AlertCircle className="h-4 w-4 mr-1" />
+                <span>Minimum ₹500 required for withdrawal</span>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -152,6 +219,90 @@ const Payments: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+      
+      {/* Withdraw Dialog */}
+      <AlertDialog open={withdrawDialogOpen} onOpenChange={setWithdrawDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Withdraw Funds</AlertDialogTitle>
+            <AlertDialogDescription>
+              Enter the amount you'd like to withdraw. Minimum withdrawal is ₹500.
+              Available balance: ₹{totalEarnings.toFixed(2)}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onWithdrawSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amount (₹)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter amount" {...field} type="number" min="500" max={totalEarnings} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="accountNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Account Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter bank account number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction type="submit">Withdraw</AlertDialogAction>
+              </AlertDialogFooter>
+            </form>
+          </Form>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Add Payment Method Dialog */}
+      <AlertDialog open={addPaymentDialogOpen} onOpenChange={setAddPaymentDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Add Payment Method</AlertDialogTitle>
+            <AlertDialogDescription>
+              Enter your payment details to add a new payment method.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <FormLabel>Account Type</FormLabel>
+              <div className="flex space-x-2">
+                <Button variant="outline" className="flex-1 bg-blue-50 border-blue-300">Bank Account</Button>
+                <Button variant="outline" className="flex-1">UPI</Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <FormLabel>Bank Name</FormLabel>
+              <Input placeholder="Enter bank name" />
+            </div>
+            <div className="space-y-2">
+              <FormLabel>Account Number</FormLabel>
+              <Input placeholder="Enter account number" />
+            </div>
+            <div className="space-y-2">
+              <FormLabel>IFSC Code</FormLabel>
+              <Input placeholder="Enter IFSC code" />
+            </div>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleAddNewCard}>Add Payment Method</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       
       {/* Bottom navigation */}
       <BottomNav />

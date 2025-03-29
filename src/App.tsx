@@ -11,6 +11,7 @@ import Orders from "./pages/Orders";
 import Products from "./pages/Products";
 import Returns from "./pages/Returns";
 import Payments from "./pages/Payments";
+import PaymentStatements from "./pages/PaymentStatements";
 import Settings from "./pages/Settings";
 import Advertisements from "./pages/Advertisements";
 import Help from "./pages/Help";
@@ -38,6 +39,7 @@ const App: React.FC = () => (
               <Route path="/products" element={<Products />} />
               <Route path="/returns" element={<Returns />} />
               <Route path="/payments" element={<Payments />} />
+              <Route path="/payments/statements" element={<PaymentStatements />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/advertisements" element={<Advertisements />} />
               <Route path="/help" element={<Help />} />

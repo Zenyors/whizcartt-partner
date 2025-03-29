@@ -22,18 +22,24 @@ const Index: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-16 bg-white">
+    <div className="min-h-screen pb-20 bg-gray-50">
       {/* Header with logo and icons */}
       <HeaderBar companyName="Whizcart" />
       
-      {/* Store status controls */}
-      <StoreStatus />
-      
-      {/* Stats dashboard */}
-      <DashboardStats stats={stats} />
-      
-      {/* Orders list */}
-      <OrdersList orders={orders} onStatusChange={refreshData} />
+      <div className="max-w-md mx-auto px-4 py-4">
+        {/* Store status controls */}
+        <StoreStatus />
+        
+        {/* Stats dashboard */}
+        <div className="mb-4">
+          <DashboardStats stats={stats} />
+        </div>
+        
+        {/* Orders list */}
+        <div className="bg-white rounded-lg shadow-sm p-4">
+          <OrdersList orders={orders} onStatusChange={refreshData} />
+        </div>
+      </div>
       
       {/* Bottom navigation */}
       <BottomNav />

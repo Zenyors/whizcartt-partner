@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useToast } from './ui/use-toast';
 import { Button } from './ui/button';
 import { Store, Copy } from 'lucide-react';
+import { Switch } from './ui/switch';
 
 interface StoreStatusProps {
   initialStatus?: boolean;
@@ -12,12 +13,11 @@ const StoreStatus: React.FC<StoreStatusProps> = ({ initialStatus = false }) => {
   const [isOnline, setIsOnline] = useState(initialStatus);
   const { toast } = useToast();
 
-  const toggleStatus = () => {
-    const newStatus = !isOnline;
-    setIsOnline(newStatus);
+  const toggleStatus = (checked: boolean) => {
+    setIsOnline(checked);
     toast({
-      title: `Store ${newStatus ? 'Online' : 'Offline'}`,
-      description: `Your store is now ${newStatus ? 'visible' : 'hidden'} to customers`,
+      title: `Store ${checked ? 'Online' : 'Offline'}`,
+      description: `Your store is now ${checked ? 'visible' : 'hidden'} to customers`,
     });
   };
 
@@ -47,25 +47,25 @@ const StoreStatus: React.FC<StoreStatusProps> = ({ initialStatus = false }) => {
   };
 
   return (
-    <div className="px-4 pb-4">
-      <div className="flex flex-col gap-3">
+    <div className="px-4 py-4 bg-white rounded-lg shadow-sm mb-4 mx-4">
+      <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <button
-            onClick={toggleStatus}
-            className={`w-16 h-8 rounded-full relative ${
-              isOnline ? 'bg-whiz-green' : 'bg-whiz-red'
-            } transition-colors`}
-          >
-            <span className="absolute left-2 text-xs text-white font-semibold">
-              {isOnline ? 'ON' : 'OFF'}
+          <div className="flex items-center gap-3">
+            <Switch 
+              checked={isOnline} 
+              onCheckedChange={toggleStatus}
+              className={isOnline ? "bg-whiz-green" : "bg-whiz-red"}
+            />
+            <span className="text-sm font-normal text-gray-700">
+              {isOnline ? 'Store Online' : 'Store Offline'}
             </span>
-          </button>
+          </div>
           
           <div className="flex gap-2">
             <Button 
               variant="outline" 
               size="sm"
-              className="flex items-center gap-1 text-xs px-2"
+              className="flex items-center gap-1 text-xs font-normal px-2"
               onClick={handleViewStore}
             >
               <Store size={16} />
@@ -75,11 +75,11 @@ const StoreStatus: React.FC<StoreStatusProps> = ({ initialStatus = false }) => {
             <Button 
               variant="outline" 
               size="sm"
-              className="flex items-center gap-1 text-xs px-2"
+              className="flex items-center gap-1 text-xs font-normal px-2"
               onClick={handleCopyLink}
             >
               <Copy size={16} />
-              Copy Store link
+              Copy Link
             </Button>
           </div>
         </div>

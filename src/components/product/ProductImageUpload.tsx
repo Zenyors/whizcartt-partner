@@ -8,11 +8,13 @@ import ImageUploadDialog from './ImageUploadDialog';
 interface ProductImageUploadProps {
   productImages: string[];
   setProductImages: React.Dispatch<React.SetStateAction<string[]>>;
+  onBarcodeDetected?: (barcodeData: { rawValue: string }) => void;
 }
 
 const ProductImageUpload: React.FC<ProductImageUploadProps> = ({ 
   productImages, 
-  setProductImages 
+  setProductImages,
+  onBarcodeDetected
 }) => {
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -87,6 +89,7 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}
           onImageCapture={handleImageUpload}
+          onBarcodeDetected={onBarcodeDetected}
         />
       </div>
     </>

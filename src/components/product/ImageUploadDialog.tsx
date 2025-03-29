@@ -14,35 +14,40 @@ interface ImageUploadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onImageCapture: (imageData: string) => void;
+  onBarcodeDetected?: (barcodeData: { rawValue: string }) => void;
 }
 
 const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
   open,
   onOpenChange,
-  onImageCapture
+  onImageCapture,
+  onBarcodeDetected
 }) => {
   const { toast } = useToast();
   const [cameraActive, setCameraActive] = React.useState(false);
+  const [isScanning, setIsScanning] = React.useState(false);
   const [facingMode, setFacingMode] = React.useState<'user' | 'environment'>('environment');
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const galleryInputRef = React.useRef<HTMLInputElement>(null);
+  const scanIntervalRef = React.useRef<number | null>(null);
 
   // Handle barcode scanning
   const handleScanBarcode = async () => {
     try {
       // Check if the BarcodeDetector API is available
       if ('BarcodeDetector' in window) {
-        // Start camera for barcode scanning
         await startCamera();
         setCameraActive(true);
+        setIsScanning(true);
         toast({
           title: "Barcode Scanner",
           description: "Point your camera at a barcode",
         });
         
-        // We'll detect barcodes in the capture function
+        // Start continuous scanning
+        startContinuousScan();
       } else {
         toast({
           title: "Not supported",
@@ -60,11 +65,84 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
     }
   };
 
+  // Start continuous scanning for barcodes
+  const startContinuousScan = () => {
+    if (scanIntervalRef.current) {
+      clearInterval(scanIntervalRef.current);
+    }
+
+    scanIntervalRef.current = window.setInterval(async () => {
+      if (!videoRef.current || !canvasRef.current || !isScanning) return;
+      
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      
+      // Set canvas size to match video
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      
+      // Draw current video frame to canvas
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      try {
+        if ('BarcodeDetector' in window) {
+          const barcodeDetector = new (window as any).BarcodeDetector({
+            formats: ['qr_code', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'code_93', 'itf']
+          });
+          
+          const barcodes = await barcodeDetector.detect(canvas);
+          
+          if (barcodes.length > 0) {
+            // Stop scanning when a barcode is found
+            clearInterval(scanIntervalRef.current || 0);
+            scanIntervalRef.current = null;
+            setIsScanning(false);
+            
+            // Draw rectangle around the barcode
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = 'red';
+            ctx.strokeRect(
+              barcodes[0].boundingBox.x,
+              barcodes[0].boundingBox.y,
+              barcodes[0].boundingBox.width,
+              barcodes[0].boundingBox.height
+            );
+            
+            // Get image with the highlighted barcode
+            const imageData = canvas.toDataURL('image/jpeg');
+            onImageCapture(imageData);
+            
+            // Pass the barcode data if callback exists
+            if (onBarcodeDetected) {
+              onBarcodeDetected(barcodes[0]);
+              
+              toast({
+                title: "Barcode detected",
+                description: `Barcode value: ${barcodes[0].rawValue}`,
+              });
+            }
+            
+            setTimeout(() => {
+              stopCamera();
+              onOpenChange(false);
+            }, 1500);
+          }
+        }
+      } catch (error) {
+        console.error("Error scanning barcode:", error);
+      }
+    }, 200); // Scan every 200ms
+  };
+
   // Handle camera capture
   const handleUseCamera = async () => {
     try {
       await startCamera();
       setCameraActive(true);
+      setIsScanning(false);
     } catch (error) {
       toast({
         title: "Camera Error",
@@ -103,6 +181,13 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
       videoRef.current.srcObject = null;
     }
     setCameraActive(false);
+    setIsScanning(false);
+    
+    // Clear any ongoing scan interval
+    if (scanIntervalRef.current) {
+      clearInterval(scanIntervalRef.current);
+      scanIntervalRef.current = null;
+    }
   };
 
   // Switch camera between front and back
@@ -112,6 +197,10 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
     // Restart camera with new facing mode
     setTimeout(async () => {
       await startCamera();
+      // If we were scanning, restart scanning
+      if (isScanning) {
+        startContinuousScan();
+      }
     }, 300);
   };
 
@@ -133,40 +222,6 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
     try {
-      // If we're in barcode scanning mode, try to detect barcodes
-      if ('BarcodeDetector' in window) {
-        const barcodeDetector = new (window as any).BarcodeDetector({
-          formats: ['qr_code', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'code_93', 'itf']
-        });
-        
-        const barcodes = await barcodeDetector.detect(canvas);
-        
-        if (barcodes.length > 0) {
-          // We found a barcode
-          toast({
-            title: "Barcode detected",
-            description: `Barcode value: ${barcodes[0].rawValue}`,
-          });
-          
-          // Draw rectangle around the barcode
-          ctx.lineWidth = 5;
-          ctx.strokeStyle = 'red';
-          ctx.strokeRect(
-            barcodes[0].boundingBox.x,
-            barcodes[0].boundingBox.y,
-            barcodes[0].boundingBox.width,
-            barcodes[0].boundingBox.height
-          );
-          
-          // Get image with the highlighted barcode
-          const imageData = canvas.toDataURL('image/jpeg');
-          onImageCapture(imageData);
-          stopCamera();
-          onOpenChange(false);
-          return;
-        }
-      }
-      
       // Get image data as base64
       const imageData = canvas.toDataURL('image/jpeg');
       onImageCapture(imageData);
@@ -221,15 +276,22 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
     reader.readAsDataURL(file);
   };
 
-  // Clean up when dialog closes
+  // Clean up when dialog closes or component unmounts
   React.useEffect(() => {
     if (!open && cameraActive) {
       stopCamera();
     }
+    
+    return () => {
+      stopCamera();
+    };
   }, [open, cameraActive]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(newOpen) => {
+      if (!newOpen) stopCamera();
+      onOpenChange(newOpen);
+    }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add Product Image</DialogTitle>

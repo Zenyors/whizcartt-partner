@@ -18,6 +18,7 @@ interface ProductFormProps {
   setProductImages: React.Dispatch<React.SetStateAction<string[]>>;
   toggleSection: (section: keyof ExpandedSections) => void;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  setFormField: (field: keyof ProductFormData, value: any) => void;
   increaseStock: () => void;
   decreaseStock: () => void;
   addAttribute: () => void;
@@ -42,6 +43,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   setProductImages,
   toggleSection,
   handleInputChange,
+  setFormField,
   increaseStock,
   decreaseStock,
   addAttribute,
@@ -58,12 +60,85 @@ const ProductForm: React.FC<ProductFormProps> = ({
   removeVariationOption,
   removeVariation
 }) => {
+  const handleBarcodeDetected = (barcodeData: { rawValue: string }) => {
+    const barcodeValue = barcodeData.rawValue;
+    console.log("Barcode detected:", barcodeValue);
+    
+    // You can implement product lookup from a database here
+    // For demo, we'll populate with mock data based on the barcode
+    
+    // Example: If the barcode looks like a UPC/EAN
+    if (/^\d{8,14}$/.test(barcodeValue)) {
+      // For demo purposes, generate "fake" product data based on the barcode
+      const mockProductData = generateMockProductData(barcodeValue);
+      
+      // Update form fields with the mock data
+      setFormField('name', mockProductData.name);
+      setFormField('price', mockProductData.price);
+      setFormField('description', mockProductData.description);
+      
+      // Add a sample attribute
+      if (mockProductData.barcode) {
+        // Check if we already have a barcode attribute
+        const existingBarcodeAttr = formData.attributes.findIndex(attr => 
+          attr.name.toLowerCase() === 'barcode' || attr.name.toLowerCase() === 'upc');
+          
+        if (existingBarcodeAttr === -1) {
+          // Add new barcode attribute
+          updateAttribute(formData.attributes.length, 'name', 'Barcode');
+          updateAttribute(formData.attributes.length, 'value', mockProductData.barcode);
+          addAttribute();
+        } else {
+          // Update existing barcode attribute
+          updateAttribute(existingBarcodeAttr, 'value', mockProductData.barcode);
+        }
+      }
+    }
+  };
+  
+  // Function to generate mock product data based on barcode
+  const generateMockProductData = (barcode: string) => {
+    // Simple hash function for deterministic but "random-looking" values
+    const hash = (str: string): number => {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+      }
+      return Math.abs(hash);
+    };
+    
+    const productHash = hash(barcode);
+    
+    // Generate product name and description based on barcode hash
+    const productTypes = ['Headphones', 'Smartphone', 'Laptop', 'Tablet', 'Camera', 'Speaker', 'Watch', 'Accessory'];
+    const brands = ['TechPro', 'Nexus', 'Quantum', 'Elite', 'Prime', 'Horizon', 'Apex', 'Vertex'];
+    
+    const typeIndex = productHash % productTypes.length;
+    const brandIndex = (productHash >> 4) % brands.length;
+    const modelNumber = (productHash % 1000) + 1000;
+    
+    const name = `${brands[brandIndex]} ${productTypes[typeIndex]} ${modelNumber}`;
+    
+    // Generate price based on product type and a factor of the hash
+    const basePrice = (((productHash % 100) + 20) * 10).toFixed(2);
+    
+    return {
+      name,
+      price: basePrice,
+      description: `High-quality ${brands[brandIndex]} ${productTypes[typeIndex]} with premium features. Model ${modelNumber}.`,
+      barcode
+    };
+  };
+
   return (
     <div className="flex-1 overflow-y-auto p-4 pb-20">
       {/* Product Images */}
       <ProductImageUpload 
         productImages={productImages} 
         setProductImages={setProductImages}
+        onBarcodeDetected={handleBarcodeDetected}
       />
 
       {/* Basic Product Details */}

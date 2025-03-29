@@ -75,6 +75,14 @@ export function useProductForm() {
     });
   };
 
+  // New function to set a specific form field
+  const setFormField = (field: keyof ProductFormData, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   const increaseStock = () => {
     setFormData({
       ...formData,
@@ -154,6 +162,7 @@ export function useProductForm() {
     setProductImages,
     toggleSection,
     handleInputChange,
+    setFormField,
     increaseStock,
     decreaseStock,
     handleCancel,

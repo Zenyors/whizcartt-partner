@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import ProductHeader from '@/components/product/ProductHeader';
 import ProductForm from '@/components/product/ProductForm';
 import { useProductForm } from '@/hooks/useProductForm';
@@ -17,9 +17,11 @@ const AddProduct: React.FC = () => {
     setProductImages,
     toggleSection,
     handleInputChange,
+    setFormField,
     increaseStock,
     decreaseStock,
     handleCancel,
+    handleSubmit,
     addAttribute,
     updateAttribute,
     removeAttribute,
@@ -34,60 +36,6 @@ const AddProduct: React.FC = () => {
     removeVariationOption,
     removeVariation
   } = useProductForm();
-
-  const handleSubmit = () => {
-    if (!formData.name || !formData.price) {
-      toast({
-        title: "Missing information",
-        description: "Please fill in at least the product name and price",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Validate discount if enabled
-    if (formData.discount.enabled && !formData.discount.amount) {
-      toast({
-        title: "Invalid discount",
-        description: "Please enter a discount amount",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Get existing products from localStorage
-    const existingProducts = JSON.parse(localStorage.getItem('storeProducts') || '[]');
-    
-    // Create a new product with a unique ID
-    const newProduct = {
-      id: Date.now(),
-      name: formData.name,
-      price: formData.price,
-      stock: formData.stock,
-      description: formData.description,
-      categories: formData.categories,
-      discount: formData.discount,
-      attributes: formData.attributes,
-      variations: formData.variations,
-      expiryDate: formData.expiryDate,
-      scheduledTime: formData.scheduledTime,
-      images: productImages
-    };
-    
-    // Add the new product to the existing products
-    const updatedProducts = [...existingProducts, newProduct];
-    
-    // Save to localStorage
-    localStorage.setItem('storeProducts', JSON.stringify(updatedProducts));
-    
-    toast({
-      title: "Product added",
-      description: "Your product has been added successfully",
-    });
-    
-    // Navigate back to store view
-    navigate('/store-view');
-  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -104,6 +52,7 @@ const AddProduct: React.FC = () => {
         setProductImages={setProductImages}
         toggleSection={toggleSection}
         handleInputChange={handleInputChange}
+        setFormField={setFormField}
         increaseStock={increaseStock}
         decreaseStock={decreaseStock}
         addAttribute={addAttribute}

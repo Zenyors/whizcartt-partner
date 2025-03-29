@@ -37,18 +37,18 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
       </div>
       
       {/* Store Logo/Avatar (positioned to overlap cover and info) */}
-      <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2" style={{ top: "36px" }}>
+      <div className="absolute left-1/2 transform -translate-x-1/2" style={{ top: "140px" }}>
         <div className="relative">
-          <Avatar className="h-20 w-20 border-4 border-white bg-white">
+          <Avatar className="h-24 w-24 border-4 border-white bg-white">
             <AvatarFallback>
-              <Package className="h-10 w-10 text-gray-400" />
+              <Package className="h-12 w-12 text-gray-400" />
             </AvatarFallback>
             <AvatarImage src="" />
           </Avatar>
           <Button 
             variant="ghost"
             size="icon"
-            className="absolute bottom-0 right-0 h-6 w-6 bg-white rounded-full"
+            className="absolute bottom-0 right-0 h-7 w-7 bg-white rounded-full"
             onClick={handleUploadStoreLogo}
           >
             <Camera className="h-3 w-3" />
@@ -56,24 +56,32 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
         </div>
       </div>
       
-      <div className="pt-12 px-4 pb-4">
+      <div className="pt-16 px-4 pb-4">
+        {/* Store Name */}
+        <div className="text-center font-medium text-lg mb-6 mt-2">
+          Store Name
+        </div>
+        
         {/* Store Link */}
-        <div className="flex justify-between items-center mb-3 mt-2">
-          <div className="text-sm">Copy Store link</div>
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center">
+            <LinkIcon className="h-4 w-4 mr-2" />
+            <span className="text-sm">Copy Store link</span>
+          </div>
           <Button 
             variant="ghost" 
             size="sm" 
             className="h-8"
             onClick={handleCopyStoreLink}
           >
-            <LinkIcon className="h-4 w-4" />
+            <span className="text-sm text-whiz-green">Copy</span>
           </Button>
         </div>
         
         {/* Address */}
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
-            <MapPin className="h-4 w-4 mr-1" />
+            <MapPin className="h-4 w-4 mr-2" />
             <span className="text-sm">Address</span>
           </div>
           <Button 
@@ -82,19 +90,19 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
             className="h-8"
             onClick={handleAddAddress}
           >
-            <Camera className="h-4 w-4" />
+            <span className="text-sm text-whiz-green">Add</span>
           </Button>
         </div>
         
-        {/* Store Name */}
-        <div className="text-center font-medium text-lg mb-4">
-          Store Name
-        </div>
-        
-        {/* Store Status - Display only, not switchable */}
-        <div className="flex justify-end items-center">
-          <span className="text-xs mr-2">Status</span>
-          <div className={`h-4 w-4 rounded-full ${isStoreActive ? "bg-whiz-green" : "bg-whiz-red"}`}></div>
+        {/* Store Status */}
+        <div className="flex justify-between items-center mb-2">
+          <div className="flex items-center">
+            <span className="text-sm">Status</span>
+          </div>
+          <div className="flex items-center">
+            <span className="text-xs mr-2">{isStoreActive ? "Active" : "Inactive"}</span>
+            <div className={`h-4 w-4 rounded-full ${isStoreActive ? "bg-whiz-green" : "bg-whiz-red"}`}></div>
+          </div>
         </div>
       </div>
     </div>

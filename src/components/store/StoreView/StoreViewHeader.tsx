@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Bell, Plus, User } from 'lucide-react';
+import { ArrowLeft, Bell, Plus } from 'lucide-react';
 
 const StoreViewHeader: React.FC = () => {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ const StoreViewHeader: React.FC = () => {
   return (
     <div className="flex items-center justify-between p-4 bg-white border-b">
       <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-        <User className="h-5 w-5" />
+        <ArrowLeft className="h-5 w-5" />
       </Button>
       
       <div className="flex items-center">

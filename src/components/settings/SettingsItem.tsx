@@ -23,18 +23,18 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
 }) => {
   return (
     <div 
-      className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+      className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
       onClick={onClick}
     >
       <div className="flex items-center">
         {icon && <div className="mr-3">{icon}</div>}
         <div>
-          <span className={`text-sm font-medium ${labelClass}`}>{label}</span>
-          {description && <p className="text-xs text-gray-500">{description}</p>}
+          <span className={`text-sm font-medium dark:text-white ${labelClass}`}>{label}</span>
+          {description && <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>}
         </div>
       </div>
       
-      {addon || (showChevron && <ChevronRight className="h-4 w-4 text-gray-400" />)}
+      {addon || (showChevron && <ChevronRight className="h-4 w-4 text-gray-400 dark:text-gray-500" />)}
     </div>
   );
 };

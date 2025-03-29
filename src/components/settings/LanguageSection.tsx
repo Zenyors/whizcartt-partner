@@ -14,12 +14,17 @@ const LanguageSection: React.FC = () => {
     const lang = settings.availableLanguages.find(l => l.value === settings.language);
     return lang ? lang.label : 'English';
   };
+
+  const handleLanguageSelect = (value: string) => {
+    updateLanguage(value);
+    setIsDialogOpen(false);
+  };
   
   return (
     <>
       <SettingsCategory title="Language">
         <SettingsItem 
-          icon={<Globe className="h-5 w-5 text-gray-600" />}
+          icon={<Globe className="h-5 w-5 text-gray-600 dark:text-gray-400" />}
           label="Language"
           description={getLanguageLabel()}
           onClick={() => setIsDialogOpen(true)}
@@ -27,20 +32,17 @@ const LanguageSection: React.FC = () => {
       </SettingsCategory>
       
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md dark:bg-gray-800">
           <DialogHeader>
-            <DialogTitle>Select Language</DialogTitle>
+            <DialogTitle className="dark:text-white">Select Language</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <div className="max-h-[300px] overflow-y-auto">
               {settings.availableLanguages.map((language) => (
                 <div
                   key={language.value}
-                  className="flex items-center justify-between p-3 hover:bg-gray-100 cursor-pointer rounded-md"
-                  onClick={() => {
-                    updateLanguage(language.value);
-                    setIsDialogOpen(false);
-                  }}
+                  className="flex items-center justify-between p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer rounded-md dark:text-white"
+                  onClick={() => handleLanguageSelect(language.value)}
                 >
                   <span>{language.label}</span>
                   {settings.language === language.value && (

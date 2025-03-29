@@ -22,7 +22,7 @@ export function useSettings() {
     const savedSettings = localStorage.getItem('userSettings');
     return savedSettings ? JSON.parse(savedSettings) : {
       notifications: true,
-      darkMode: false,
+      darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
       language: 'english',
       availableLanguages: [
         { value: 'english', label: 'English' },
@@ -39,9 +39,17 @@ export function useSettings() {
     };
   });
 
+  // Apply dark mode on initial load
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', settings.darkMode);
+  }, []);
+
   // Save settings to localStorage when they change
   useEffect(() => {
     localStorage.setItem('userSettings', JSON.stringify(settings));
+    
+    // Apply dark mode when it changes
+    document.documentElement.classList.toggle('dark', settings.darkMode);
   }, [settings]);
 
   const updateNotifications = (value: boolean) => {
@@ -56,8 +64,6 @@ export function useSettings() {
 
   const updateDarkMode = (value: boolean) => {
     setSettings(prev => ({ ...prev, darkMode: value }));
-    // In a real app, you'd apply dark mode theme here
-    document.documentElement.classList.toggle('dark', value);
     toast({
       title: value ? "Dark mode enabled" : "Dark mode disabled",
     });

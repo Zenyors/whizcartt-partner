@@ -9,6 +9,11 @@ import { useSettings } from '@/hooks/useSettings';
 const DisplaySettingsSection: React.FC = () => {
   const { settings, updateDarkMode } = useSettings();
   
+  // Handle dark mode toggle
+  const handleDarkModeToggle = (checked: boolean) => {
+    updateDarkMode(checked);
+  };
+  
   return (
     <SettingsCategory 
       title="Display & Accessibility" 
@@ -22,7 +27,8 @@ const DisplaySettingsSection: React.FC = () => {
         addon={
           <Switch 
             checked={settings.darkMode} 
-            onCheckedChange={updateDarkMode} 
+            onCheckedChange={handleDarkModeToggle} 
+            className={settings.darkMode ? "bg-indigo-500" : ""}
           />
         }
       />

@@ -11,6 +11,7 @@ import { ArrowRight, Megaphone, Zap } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import PromotionSection from '../components/PromotionSection';
+import CreditCardOffers from '../components/CreditCardOffers';
 
 const Index: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -60,6 +61,9 @@ const Index: React.FC = () => {
         
         {/* Promotions Section */}
         <PromotionSection />
+        
+        {/* ICICI Bank Credit Card Offers */}
+        <CreditCardOffers />
       </div>
       
       {/* Bottom navigation */}

@@ -26,14 +26,6 @@ const StoreView: React.FC = () => {
     });
   };
   
-  const handleChangeStoreStatus = (checked: boolean) => {
-    setIsStoreActive(checked);
-    toast({
-      title: checked ? "Store Active" : "Store Inactive",
-      description: `Your store is now ${checked ? 'visible' : 'hidden'} to customers`,
-    });
-  };
-  
   const handleEditProduct = (id: number) => {
     toast({
       title: "Edit Product",
@@ -54,6 +46,13 @@ const StoreView: React.FC = () => {
       description: "Logo upload functionality coming soon",
     });
   };
+  
+  const handleUploadCoverImage = () => {
+    toast({
+      title: "Upload Cover Image",
+      description: "Cover image upload functionality coming soon",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-white pb-16">
@@ -61,10 +60,10 @@ const StoreView: React.FC = () => {
       
       <StoreInfo 
         isStoreActive={isStoreActive}
-        handleChangeStoreStatus={handleChangeStoreStatus}
         handleCopyStoreLink={handleCopyStoreLink}
         handleAddAddress={handleAddAddress}
         handleUploadStoreLogo={handleUploadStoreLogo}
+        handleUploadCoverImage={handleUploadCoverImage}
       />
       
       <StoreContent 

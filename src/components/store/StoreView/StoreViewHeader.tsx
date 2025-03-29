@@ -8,7 +8,7 @@ const StoreViewHeader: React.FC = () => {
   const navigate = useNavigate();
   
   return (
-    <div className="flex items-center justify-between p-4 bg-white">
+    <div className="flex items-center justify-between p-4 bg-white border-b">
       <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
         <User className="h-5 w-5" />
       </Button>

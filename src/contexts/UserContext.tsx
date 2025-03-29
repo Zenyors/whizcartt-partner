@@ -25,7 +25,7 @@ const defaultProfile: UserProfile = {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [userProfile, setUserProfile] = useState<UserProfile>(defaultProfile);
   const [isAuthenticated, setIsAuthenticated] = useState(true);
 

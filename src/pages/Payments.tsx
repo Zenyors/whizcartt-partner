@@ -32,7 +32,7 @@ const Payments: React.FC = () => {
   const [addPaymentDialogOpen, setAddPaymentDialogOpen] = useState(false);
   const [addAmountDialogOpen, setAddAmountDialogOpen] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-    { id: '1', type: 'bank', name: 'Bank Account', details: 'XXXX XXXX XXXX 4321' }
+    { id: '1', type: 'bank', name: 'Bank Account', details: 'XXXX XXXX XXXX 4321', isPrimary: true }
   ]);
   
   const totalEarnings = transactions
@@ -49,6 +49,50 @@ const Payments: React.FC = () => {
   
   const handleAddAmount = () => {
     setAddAmountDialogOpen(true);
+  };
+
+  const handleSetPrimary = (id: string) => {
+    setPaymentMethods(methods => 
+      methods.map(method => ({
+        ...method,
+        isPrimary: method.id === id
+      }))
+    );
+    
+    toast({
+      title: "Primary Payment Method",
+      description: "Your payment method has been set as primary.",
+    });
+  };
+  
+  const handleDeletePaymentMethod = (id: string) => {
+    const methodToDelete = paymentMethods.find(method => method.id === id);
+    
+    // Don't allow deleting the primary payment method if it's the only one
+    if (methodToDelete?.isPrimary && paymentMethods.length === 1) {
+      toast({
+        title: "Cannot Delete",
+        description: "You cannot delete your only payment method.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // If deleting the primary method, set another one as primary
+    if (methodToDelete?.isPrimary && paymentMethods.length > 1) {
+      const remainingMethods = paymentMethods.filter(method => method.id !== id);
+      setPaymentMethods([
+        { ...remainingMethods[0], isPrimary: true },
+        ...remainingMethods.slice(1)
+      ]);
+    } else {
+      setPaymentMethods(methods => methods.filter(method => method.id !== id));
+    }
+    
+    toast({
+      title: "Payment Method Deleted",
+      description: "Your payment method has been removed.",
+    });
   };
 
   const onWithdrawSubmit = (values: z.infer<any>) => {
@@ -95,24 +139,31 @@ const Payments: React.FC = () => {
 
   const handleAddNewPaymentMethod = (data: z.infer<any>) => {
     let newPaymentMethod: PaymentMethod;
+    const makeNewMethodPrimary = paymentMethods.length === 0;
     
     if (data.type === 'bank') {
       newPaymentMethod = {
         id: `pm-${Date.now()}`,
         type: 'bank',
         name: data.bankName || 'Bank Account',
-        details: `${data.accountNumber?.substring(0, 4) || 'XXXX'} XXXX XXXX ${data.accountNumber?.slice(-4) || 'XXXX'}`
+        details: `${data.accountNumber?.substring(0, 4) || 'XXXX'} XXXX XXXX ${data.accountNumber?.slice(-4) || 'XXXX'}`,
+        isPrimary: makeNewMethodPrimary
       };
     } else {
       newPaymentMethod = {
         id: `pm-${Date.now()}`,
         type: 'upi',
         name: 'UPI ID',
-        details: data.upiId || 'example@upi'
+        details: data.upiId || 'example@upi',
+        isPrimary: makeNewMethodPrimary
       };
     }
     
-    setPaymentMethods([...paymentMethods, newPaymentMethod]);
+    if (makeNewMethodPrimary) {
+      setPaymentMethods([newPaymentMethod]);
+    } else {
+      setPaymentMethods([...paymentMethods, newPaymentMethod]);
+    }
     
     toast({
       title: "Payment Method Added",
@@ -142,6 +193,8 @@ const Payments: React.FC = () => {
       <PaymentMethodList 
         paymentMethods={paymentMethods}
         onAddPaymentMethod={handleAddPaymentMethod}
+        onSetPrimary={handleSetPrimary}
+        onDeletePaymentMethod={handleDeletePaymentMethod}
       />
       
       {/* Transactions */}

@@ -14,6 +14,7 @@ import Payments from "./pages/Payments";
 import PaymentStatements from "./pages/PaymentStatements";
 import Settings from "./pages/Settings";
 import Advertisements from "./pages/Advertisements";
+import CreateAd from "./pages/CreateAd";
 import Help from "./pages/Help";
 import Store from "./pages/Store";
 import StoreView from "./pages/StoreView";
@@ -42,6 +43,7 @@ const App: React.FC = () => (
               <Route path="/payments/statements" element={<PaymentStatements />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/advertisements" element={<Advertisements />} />
+              <Route path="/create-ad" element={<CreateAd />} />
               <Route path="/help" element={<Help />} />
               <Route path="/store" element={<Store />} />
               <Route path="/store-view" element={<StoreView />} />

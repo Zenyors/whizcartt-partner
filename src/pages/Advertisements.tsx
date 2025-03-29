@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, Eye, Edit, Trash2, BarChart3, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -71,17 +72,11 @@ const Advertisements: React.FC = () => {
   const scheduledAds = ads.filter(ad => ad.status === 'scheduled');
   
   const handleCreateAd = () => {
-    toast({
-      title: "Create Ad",
-      description: "This feature will be available soon",
-    });
+    navigate('/create-ad');
   };
   
   const handleEditAd = (id: string) => {
-    toast({
-      title: "Edit Ad",
-      description: "This feature will be available soon",
-    });
+    navigate(`/create-ad?edit=${id}`);
   };
   
   const handleDeleteAd = (id: string) => {
@@ -93,10 +88,11 @@ const Advertisements: React.FC = () => {
   };
   
   const handleViewStats = (id: string) => {
-    toast({
-      title: "Ad Statistics",
-      description: "This feature will be available soon",
-    });
+    navigate(`/ad-statistics/${id}`);
+  };
+  
+  const handleViewPreview = (id: string) => {
+    navigate(`/ad-preview/${id}`);
   };
 
   const AdCard: React.FC<{ ad: Advertisement }> = ({ ad }) => {
@@ -172,7 +168,7 @@ const Advertisements: React.FC = () => {
                 variant="outline" 
                 size="sm" 
                 className="text-xs" 
-                onClick={() => handleEditAd(ad.id)}
+                onClick={() => handleViewPreview(ad.id)}
               >
                 <Eye className="h-3 w-3 mr-1" />
                 Preview

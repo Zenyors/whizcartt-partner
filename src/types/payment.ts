@@ -13,4 +13,5 @@ export interface PaymentMethod {
   type: 'bank' | 'upi';
   name: string;
   details: string;
+  isPrimary?: boolean;
 }

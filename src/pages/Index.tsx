@@ -26,7 +26,7 @@ const Index: React.FC = () => {
       {/* Header with logo and icons */}
       <HeaderBar companyName="Whizcartt" />
       
-      <div className="max-w-md mx-auto px-4 py-4">
+      <div className="p-4">
         {/* Store status controls */}
         <StoreStatus />
         

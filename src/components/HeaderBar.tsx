@@ -1,18 +1,16 @@
 
 import React, { useState } from 'react';
-import { Bell, User, Plus } from 'lucide-react';
+import { Bell, User, Plus, BadgeCheck } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from './ui/use-toast';
 import ProfileSidebar from './ProfileSidebar';
 
 interface HeaderBarProps {
   companyName?: string;
-  partnerText?: string;
 }
 
 const HeaderBar: React.FC<HeaderBarProps> = ({ 
-  companyName = "Whizcartt", 
-  partnerText = "Partner" 
+  companyName = "Whizcartt"
 }) => {
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -47,9 +45,9 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
           <User className="text-gray-600" />
         </Button>
         
-        <div className="flex flex-col items-center">
+        <div className="flex items-center gap-1">
           <span className="text-whiz-green font-bold text-2xl">{companyName}</span>
-          {partnerText && <span className="text-sm text-gray-500 font-light">{partnerText}</span>}
+          <BadgeCheck className="text-blue-500 h-5 w-5" />
         </div>
         
         <div className="flex gap-2">

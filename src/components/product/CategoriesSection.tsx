@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -20,8 +20,15 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({
   addCategory,
   removeCategory
 }) => {
-  // Predefined categories
+  const [customCategory, setCustomCategory] = useState('');
   const availableCategories = ['Groceries', 'Electronics', 'Fashion', 'Health & Beauty', 'Home & Kitchen'];
+
+  const handleAddCustomCategory = () => {
+    if (customCategory.trim()) {
+      addCategory(customCategory.trim());
+      setCustomCategory('');
+    }
+  };
 
   return (
     <div>
@@ -30,7 +37,7 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({
         className="w-full flex justify-between items-center"
       >
         <div>
-          <h3 className="font-medium text-sm">Add Categories {categories.length > 0 ? `(${categories.length})` : ''}</h3>
+          <h3 className="font-semibold text-sm">Add Categories {categories.length > 0 ? `(${categories.length})` : ''}</h3>
           <p className="text-xs text-gray-500">Add Categories to the product</p>
         </div>
         <ChevronRight className={`h-5 w-5 transition-transform ${expanded ? 'rotate-90' : ''}`} />
@@ -80,17 +87,10 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({
             <div className="flex gap-2">
               <Input
                 placeholder="Enter category name"
-                id="customCategory"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
               />
-              <Button
-                onClick={() => {
-                  const input = document.getElementById('customCategory') as HTMLInputElement;
-                  if (input && input.value) {
-                    addCategory(input.value);
-                    input.value = '';
-                  }
-                }}
-              >
+              <Button onClick={handleAddCustomCategory}>
                 Add
               </Button>
             </div>

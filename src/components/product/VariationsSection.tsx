@@ -40,7 +40,7 @@ const VariationsSection: React.FC<VariationsSectionProps> = ({
         className="w-full flex justify-between items-center"
       >
         <div>
-          <h3 className="font-medium text-sm">Add Variation {variations.length > 0 ? `(${variations.length})` : ''}</h3>
+          <h3 className="font-semibold text-sm">Add Variation {variations.length > 0 ? `(${variations.length})` : ''}</h3>
           <p className="text-xs text-gray-500">Add different variations of the products such as size, color, fabric option</p>
         </div>
         <ChevronRight className={`h-5 w-5 transition-transform ${expanded ? 'rotate-90' : ''}`} />

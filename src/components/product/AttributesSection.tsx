@@ -34,7 +34,7 @@ const AttributesSection: React.FC<AttributesSectionProps> = ({
         className="w-full flex justify-between items-center"
       >
         <div>
-          <h3 className="font-medium text-sm">Manage Custom Attributes ({attributes.length} Added)</h3>
+          <h3 className="font-semibold text-sm">Manage Custom Attributes ({attributes.length} Added)</h3>
           <p className="text-xs text-gray-500">Collect custom information such as measurement</p>
         </div>
         <ChevronRight className={`h-5 w-5 transition-transform ${expanded ? 'rotate-90' : ''}`} />

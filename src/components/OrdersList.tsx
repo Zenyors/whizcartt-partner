@@ -8,16 +8,25 @@ interface OrdersListProps {
   orders: Order[];
   onStatusChange: () => void;
   showOnlyPending?: boolean;
+  maxDisplayCount?: number;
 }
 
-const OrdersList: React.FC<OrdersListProps> = ({ orders, onStatusChange, showOnlyPending = false }) => {
-  const filteredOrders = showOnlyPending ? orders.filter(order => order.status === 'pending') : orders;
+const OrdersList: React.FC<OrdersListProps> = ({ 
+  orders, 
+  onStatusChange, 
+  showOnlyPending = false,
+  maxDisplayCount
+}) => {
+  let filteredOrders = showOnlyPending ? orders.filter(order => order.status === 'pending') : orders;
+  
+  // If maxDisplayCount is provided, limit the number of orders displayed
+  if (maxDisplayCount !== undefined) {
+    filteredOrders = filteredOrders.slice(0, maxDisplayCount);
+  }
 
   return (
     <Card className="shadow-sm">
       <CardContent className="p-4">
-        <h2 className="text-lg font-semibold mb-3">Orders</h2>
-        
         {filteredOrders.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             No orders found

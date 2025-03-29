@@ -6,10 +6,16 @@ import DashboardStats from '../components/DashboardStats';
 import OrdersList from '../components/OrdersList';
 import BottomNav from '../components/BottomNav';
 import { getOrders, getStats, DashboardStats as Stats, Order } from '../services/orderService';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Megaphone, Zap } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
+import PromotionSection from '../components/PromotionSection';
 
 const Index: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<Stats>(getStats());
+  const navigate = useNavigate();
   
   // Fetch initial data
   useEffect(() => {
@@ -17,7 +23,8 @@ const Index: React.FC = () => {
   }, []);
   
   const refreshData = () => {
-    setOrders(getOrders());
+    // Get only the most recent 3 orders
+    setOrders(getOrders().slice(0, 3));
     setStats(getStats());
   };
 
@@ -35,10 +42,24 @@ const Index: React.FC = () => {
           <DashboardStats stats={stats} />
         </div>
         
-        {/* Orders list */}
-        <div className="bg-white rounded-lg shadow-sm p-4">
+        {/* Orders list with view all button */}
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-lg font-semibold">Live Orders</h2>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-blue-600 flex items-center"
+              onClick={() => navigate('/orders')}
+            >
+              View All <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+          </div>
           <OrdersList orders={orders} onStatusChange={refreshData} />
         </div>
+        
+        {/* Promotions Section */}
+        <PromotionSection />
       </div>
       
       {/* Bottom navigation */}

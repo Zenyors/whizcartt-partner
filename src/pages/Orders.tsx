@@ -17,6 +17,7 @@ const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>(getOrders());
   const [searchQuery, setSearchQuery] = useState('');
   const [showAnalytics, setShowAnalytics] = useState(true);
+  const [activeTab, setActiveTab] = useState('accepted');
   
   const filteredOrders = orders.filter(order => 
     order.id.toString().includes(searchQuery)
@@ -31,9 +32,9 @@ const Orders: React.FC = () => {
 
   // Create arrays of order statuses for the grid layout
   const orderStatusRow1 = [
-    { label: 'All', count: filteredOrders.length, value: 'all' },
-    { label: 'Pending', count: pendingOrders.length, value: 'pending' },
     { label: 'Accepted', count: acceptedOrders.length, value: 'accepted' },
+    { label: 'Pending', count: pendingOrders.length, value: 'pending' },
+    { label: 'Denied', count: deniedOrders.length, value: 'denied' },
   ];
   
   const orderStatusRow2 = [
@@ -41,6 +42,10 @@ const Orders: React.FC = () => {
     { label: 'Delivered', count: deliveredOrders.length, value: 'delivered' },
     { label: 'Completed', count: completedOrders.length, value: 'completed' },
   ];
+
+  const handleStatusCardClick = (status: string) => {
+    setActiveTab(status);
+  };
 
   return (
     <div className="min-h-screen pb-20 bg-gray-50">
@@ -85,7 +90,11 @@ const Orders: React.FC = () => {
         {/* Order Status Cards - First Row */}
         <div className="grid grid-cols-3 gap-2 mb-2">
           {orderStatusRow1.map((status) => (
-            <Card key={status.value} className="shadow-sm">
+            <Card 
+              key={status.value} 
+              className={`shadow-sm cursor-pointer transition-colors ${activeTab === status.value ? 'bg-blue-50 border-blue-300' : ''}`}
+              onClick={() => handleStatusCardClick(status.value)}
+            >
               <CardContent className="p-3 text-center">
                 <h3 className="text-sm font-medium">{status.label}</h3>
                 <Badge variant="secondary" className="mt-1">{status.count}</Badge>
@@ -97,7 +106,11 @@ const Orders: React.FC = () => {
         {/* Order Status Cards - Second Row */}
         <div className="grid grid-cols-3 gap-2 mb-4">
           {orderStatusRow2.map((status) => (
-            <Card key={status.value} className="shadow-sm">
+            <Card 
+              key={status.value} 
+              className={`shadow-sm cursor-pointer transition-colors ${activeTab === status.value ? 'bg-blue-50 border-blue-300' : ''}`}
+              onClick={() => handleStatusCardClick(status.value)}
+            >
               <CardContent className="p-3 text-center">
                 <h3 className="text-sm font-medium">{status.label}</h3>
                 <Badge variant="secondary" className="mt-1">{status.count}</Badge>
@@ -107,20 +120,20 @@ const Orders: React.FC = () => {
         </div>
         
         {/* Tabs */}
-        <Tabs defaultValue="all" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="hidden">
             {/* Hidden but kept for functionality */}
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
             <TabsTrigger value="accepted">Accepted</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="denied">Denied</TabsTrigger>
             <TabsTrigger value="dispatched">Dispatched</TabsTrigger>
             <TabsTrigger value="delivered">Delivered</TabsTrigger>
             <TabsTrigger value="completed">Completed</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="all" className="mt-0">
+          <TabsContent value="accepted" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              <OrdersList orders={filteredOrders} onStatusChange={() => setOrders(getOrders())} />
+              <OrdersList orders={acceptedOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>
           </TabsContent>
           
@@ -130,9 +143,9 @@ const Orders: React.FC = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="accepted" className="mt-0">
+          <TabsContent value="denied" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              <OrdersList orders={acceptedOrders} onStatusChange={() => setOrders(getOrders())} />
+              <OrdersList orders={deniedOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>
           </TabsContent>
           

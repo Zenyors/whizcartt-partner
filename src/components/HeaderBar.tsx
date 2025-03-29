@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Bell, User, Plus, BadgeCheck } from 'lucide-react';
+import { Bell, User, Plus } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from './ui/use-toast';
 import ProfileSidebar from './ProfileSidebar';
@@ -44,9 +44,8 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
           <User className="text-gray-600" />
         </Button>
         
-        <div className="flex items-center gap-1">
+        <div className="absolute left-1/2 transform -translate-x-1/2">
           <span className="text-whiz-green font-bold text-2xl">{companyName}</span>
-          <BadgeCheck className="text-blue-500 h-5 w-5" />
         </div>
         
         <div className="flex gap-2">

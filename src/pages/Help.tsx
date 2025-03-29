@@ -63,25 +63,29 @@ const Help: React.FC = () => {
             <div className="grid grid-cols-2 gap-3">
               <Button 
                 variant="outline" 
-                className="h-auto py-3 justify-start" 
+                className="h-auto py-3 justify-start px-3" 
                 onClick={() => handleContactSupport("chat")}
               >
-                <MessageCircle className="h-5 w-5 mr-2" />
-                <div className="text-left">
-                  <div className="font-medium text-sm">Chat Support</div>
-                  <div className="text-xs text-gray-500">Available 24/7</div>
+                <div className="flex items-center">
+                  <MessageCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <div className="text-left">
+                    <div className="font-medium text-sm">Chat Support</div>
+                    <div className="text-xs text-gray-500">Available 24/7</div>
+                  </div>
                 </div>
               </Button>
               
               <Button 
                 variant="outline" 
-                className="h-auto py-3 justify-start" 
+                className="h-auto py-3 justify-start px-3" 
                 onClick={() => navigate('/help/guides')}
               >
-                <FileText className="h-5 w-5 mr-2" />
-                <div className="text-left">
-                  <div className="font-medium text-sm">User Guides</div>
-                  <div className="text-xs text-gray-500">Step-by-step help</div>
+                <div className="flex items-center">
+                  <FileText className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <div className="text-left">
+                    <div className="font-medium text-sm">User Guides</div>
+                    <div className="text-xs text-gray-500">Step-by-step help</div>
+                  </div>
                 </div>
               </Button>
             </div>
@@ -166,16 +170,16 @@ const ContactOption: React.FC<ContactOptionProps> = ({
       className={`flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 ${!isLast ? 'border-b' : ''}`}
       onClick={onClick}
     >
-      <div className="flex items-center">
-        <div className="bg-gray-100 p-2 rounded-full mr-3">
+      <div className="flex items-center w-full">
+        <div className="bg-gray-100 p-2 rounded-full mr-3 flex-shrink-0">
           {icon}
         </div>
-        <div>
+        <div className="flex-grow">
           <p className="font-medium text-sm">{title}</p>
           <p className="text-xs text-gray-500">{description}</p>
         </div>
+        <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
       </div>
-      <ChevronRight className="h-4 w-4 text-gray-400" />
     </div>
   );
 };

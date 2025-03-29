@@ -10,9 +10,7 @@ import {
   Settings,
   Megaphone,
   HelpCircle,
-  LogOut,
-  Store,
-  Link
+  LogOut
 } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -33,14 +31,6 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ open, onClose }) => {
   const handleNavigation = (path: string) => {
     navigate(path);
     onClose();
-  };
-
-  const copyStoreLink = () => {
-    navigator.clipboard.writeText('https://store.whizcart.com/johndoe');
-    toast({
-      title: "Link copied",
-      description: "Store link copied to clipboard",
-    });
   };
 
   const handleLogout = () => {
@@ -80,27 +70,6 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ open, onClose }) => {
                 <p className="text-sm text-gray-600">{userProfile.phone}</p>
                 <p className="text-sm text-gray-500">{userProfile.email}</p>
               </div>
-            </div>
-            
-            <div className="mt-4 flex justify-between">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="text-xs" 
-                onClick={() => handleNavigation('/store-view')}
-              >
-                <Store className="h-3 w-3 mr-1" />
-                View Store
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="text-xs" 
-                onClick={copyStoreLink}
-              >
-                <Link className="h-3 w-3 mr-1" />
-                Copy Store link
-              </Button>
             </div>
           </div>
           

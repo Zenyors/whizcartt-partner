@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Megaphone, Zap, ShoppingBag, Globe } from 'lucide-react';
+import { ArrowRight, Megaphone, Zap, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const PromotionSection: React.FC = () => {
@@ -54,58 +54,6 @@ const PromotionSection: React.FC = () => {
                 <div>
                   <p className="font-medium">Promote Special Offers</p>
                   <p className="text-xs text-gray-500">Highlight discounts and promotions</p>
-                </div>
-              </div>
-              <ArrowRight className="h-4 w-4 text-gray-400" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Business Promotions Section */}
-      <Card className="bg-white shadow-sm overflow-hidden">
-        <CardContent className="p-0">
-          <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-4 text-white">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Globe className="h-6 w-6 mr-2" />
-                <h3 className="font-semibold text-lg">Expand Your Business</h3>
-              </div>
-              <Button 
-                className="bg-white text-orange-600 hover:bg-orange-50" 
-                size="sm"
-                onClick={() => navigate('/store')}
-              >
-                Explore
-              </Button>
-            </div>
-            <p className="mt-2 text-sm opacity-90">
-              Connect with partners and grow your market reach
-            </p>
-          </div>
-          
-          <div className="p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="bg-orange-100 p-2 rounded-full mr-3">
-                  <Zap className="h-4 w-4 text-orange-600" />
-                </div>
-                <div>
-                  <p className="font-medium">Integrate with Other Apps</p>
-                  <p className="text-xs text-gray-500">Connect with popular marketplaces</p>
-                </div>
-              </div>
-              <ArrowRight className="h-4 w-4 text-gray-400" />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="bg-purple-100 p-2 rounded-full mr-3">
-                  <Megaphone className="h-4 w-4 text-purple-600" />
-                </div>
-                <div>
-                  <p className="font-medium">Business Partnerships</p>
-                  <p className="text-xs text-gray-500">Find collaborators and affiliates</p>
                 </div>
               </div>
               <ArrowRight className="h-4 w-4 text-gray-400" />

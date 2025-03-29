@@ -54,8 +54,8 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
           </Carousel>
         )}
 
-        {/* Only show the upload container if there are fewer than 2 images */}
-        {productImages.length < 2 && (
+        {/* Only show the upload container if there are fewer than 5 images */}
+        {productImages.length < 5 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <label className="bg-gray-100 aspect-square rounded-md flex flex-col items-center justify-center cursor-pointer">
               <input 

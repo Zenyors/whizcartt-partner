@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { Order } from '@/services/orderService';
-import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltipContent, ChartLegendContent } from '@/components/ui/chart';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface OrderAnalyticsProps {
   orders: Order[];
@@ -27,58 +28,69 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({ orders }) => {
     orders: Math.floor(Math.random() * (orders.length + 1))
   })).sort((a, b) => b.orders - a.orders);
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#e91e63'];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-md font-medium mb-2">Order Status Distribution</h3>
-        <div className="h-64 w-full">
-          <ChartContainer 
-            config={{
-              pending: { color: '#FFBB28' },
-              accepted: { color: '#00C49F' },
-              denied: { color: '#FF8042' },
-              completed: { color: '#0088FE' }
-            }}
-          >
-            <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip content={<ChartTooltipContent />} />
-            </PieChart>
-          </ChartContainer>
-        </div>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-md">Order Status Distribution</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-64 w-full">
+            <ChartContainer 
+              config={{
+                pending: { color: '#FFBB28' },
+                accepted: { color: '#00C49F' },
+                denied: { color: '#FF8042' },
+                completed: { color: '#0088FE' },
+                dispatched: { color: '#8884d8' },
+                delivered: { color: '#e91e63' }
+              }}
+            >
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip content={<ChartTooltipContent />} />
+                <Legend content={<ChartLegendContent />} />
+              </PieChart>
+            </ChartContainer>
+          </div>
+        </CardContent>
+      </Card>
       
-      <div>
-        <h3 className="text-md font-medium mb-2">Popular Categories</h3>
-        <div className="h-64 w-full">
-          <ChartContainer 
-            config={{
-              orders: { color: '#0088FE' },
-            }}
-          >
-            <BarChart data={ordersByCategory}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="orders" fill="#0088FE" />
-            </BarChart>
-          </ChartContainer>
-        </div>
-      </div>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-md">Popular Categories</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-64 w-full">
+            <ChartContainer 
+              config={{
+                orders: { color: '#0088FE' },
+              }}
+            >
+              <BarChart data={ordersByCategory}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="orders" fill="#0088FE" />
+              </BarChart>
+            </ChartContainer>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

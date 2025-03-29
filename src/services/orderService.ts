@@ -3,7 +3,7 @@ export interface Order {
   id: string;
   totalItems: number;
   amount: number;
-  status: 'pending' | 'accepted' | 'denied' | 'completed';
+  status: 'pending' | 'accepted' | 'denied' | 'dispatched' | 'delivered' | 'completed';
   timestamp: Date;
   reason?: string;
 }
@@ -37,7 +37,7 @@ const mockOrders: Order[] = [
     id: 'DEF789',
     totalItems: 5,
     amount: 78.25,
-    status: 'pending',
+    status: 'dispatched',
     timestamp: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
   },
   {
@@ -54,6 +54,13 @@ const mockOrders: Order[] = [
     status: 'denied',
     timestamp: new Date(Date.now() - 1000 * 60 * 120), // 2 hours ago
     reason: 'Items out of stock'
+  },
+  {
+    id: 'MNO113',
+    totalItems: 3,
+    amount: 34.25,
+    status: 'delivered',
+    timestamp: new Date(Date.now() - 1000 * 60 * 180), // 3 hours ago
   }
 ];
 
@@ -76,7 +83,7 @@ export const getStats = (): DashboardStats => {
 
 export const updateOrderStatus = (
   orderId: string, 
-  status: 'accepted' | 'denied',
+  status: 'accepted' | 'denied' | 'dispatched' | 'delivered' | 'completed',
   reason?: string
 ): void => {
   const orderIndex = mockOrders.findIndex(order => order.id === orderId);

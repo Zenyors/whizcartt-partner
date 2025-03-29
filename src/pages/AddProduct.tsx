@@ -2,20 +2,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
-import { Plus, Minus, Upload, ChevronRight, Calendar, Tag, Gauge, Clock } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { 
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
+
+// Import components
+import ProductHeader from '@/components/product/ProductHeader';
+import ProductImageUpload from '@/components/product/ProductImageUpload';
+import BasicProductDetails from '@/components/product/BasicProductDetails';
+import AttributesSection from '@/components/product/AttributesSection';
+import DiscountSection from '@/components/product/DiscountSection';
+import CategoriesSection from '@/components/product/CategoriesSection';
+import VariationsSection from '@/components/product/VariationsSection';
+import DateTimeSection from '@/components/product/DateTimeSection';
 
 interface ProductFormData {
   name: string;
@@ -234,20 +230,6 @@ const AddProduct: React.FC = () => {
     });
   };
 
-  // Handle image upload
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          setProductImages([...productImages, reader.result]);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleSubmit = () => {
     if (!formData.name || !formData.price) {
       toast({
@@ -278,490 +260,98 @@ const AddProduct: React.FC = () => {
     navigate('/store-view');
   };
 
-  // Predefined categories
-  const availableCategories = ['Groceries', 'Electronics', 'Fashion', 'Health & Beauty', 'Home & Kitchen'];
-
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b">
-        <button 
-          className="text-red-500 font-medium"
-          onClick={handleCancel}
-        >
-          Cancel
-        </button>
-        <div className="font-bold text-base">Add Product</div>
-        <button 
-          className="font-medium"
-          onClick={handleSubmit}
-        >
-          ADD
-        </button>
-      </div>
+      <ProductHeader 
+        title="Add Product" 
+        handleCancel={handleCancel} 
+        handleSubmit={handleSubmit}
+      />
 
       {/* Form Content */}
       <div className="flex-1 overflow-y-auto p-4 pb-20">
         {/* Product Images */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          {productImages.length > 0 ? (
-            productImages.map((img, index) => (
-              <div key={index} className="aspect-square rounded-md overflow-hidden relative">
-                <img src={img} alt={`Product ${index + 1}`} className="w-full h-full object-cover" />
-                <button 
-                  className="absolute top-2 right-2 bg-white rounded-full p-1"
-                  onClick={() => setProductImages(productImages.filter((_, i) => i !== index))}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 6 6 18"></path>
-                    <path d="m6 6 12 12"></path>
-                  </svg>
-                </button>
-              </div>
-            ))
-          ) : (
-            <>
-              <label className="bg-gray-100 aspect-square rounded-md flex flex-col items-center justify-center cursor-pointer">
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
-                  onChange={handleImageUpload}
-                />
-                <div className="rounded-full border border-gray-400 p-2 mb-2">
-                  <Upload className="h-5 w-5 text-gray-500" />
-                </div>
-                <span className="text-sm text-gray-500">Add Products</span>
-              </label>
-              <label className="bg-gray-100 aspect-square rounded-md flex flex-col items-center justify-center cursor-pointer">
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
-                  onChange={handleImageUpload}
-                />
-                <div className="rounded-full border border-gray-400 p-2 mb-2">
-                  <Upload className="h-5 w-5 text-gray-500" />
-                </div>
-                <span className="text-sm text-gray-500">Add Products</span>
-              </label>
-            </>
-          )}
-        </div>
+        <ProductImageUpload 
+          productImages={productImages} 
+          setProductImages={setProductImages}
+        />
 
-        <div className="flex justify-end mb-4">
-          <span className="text-sm text-gray-500">Drag to reorder</span>
-        </div>
+        {/* Basic Product Details */}
+        <BasicProductDetails 
+          formData={formData}
+          handleInputChange={handleInputChange}
+          increaseStock={increaseStock}
+          decreaseStock={decreaseStock}
+        />
 
-        {/* Product Details */}
-        <div className="space-y-6">
-          {/* Product Name */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Product Name</label>
-            <Input 
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              placeholder="Enter product name"
-            />
-          </div>
-
-          {/* Price */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Price</label>
-            <Input 
-              name="price"
-              value={formData.price}
-              onChange={handleInputChange}
-              placeholder="₹0.00"
-              type="number"
-              min="0"
-              step="0.01"
-            />
-          </div>
-
-          {/* Stock */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Stock</label>
-            <div className="flex items-center">
-              <span className="mr-4">{formData.stock} in Stock</span>
-              <div className="flex">
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  className="rounded-r-none border-r-0" 
-                  onClick={decreaseStock}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  className="rounded-l-none" 
-                  onClick={increaseStock}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Add Product Description</label>
-            <Textarea 
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Enter product description"
-              rows={3}
-            />
-            <Separator className="mt-1" />
-          </div>
-
+        {/* Additional Sections */}
+        <div className="space-y-6 mt-6">
           {/* Custom Attributes Section */}
-          <div>
-            <button 
-              onClick={() => toggleSection('attributes')}
-              className="w-full flex justify-between items-center"
-            >
-              <div>
-                <h3 className="font-medium text-sm">Manage Custom Attributes ({formData.attributes.length} Added)</h3>
-                <p className="text-xs text-gray-500">Collect custom information such as measurement</p>
-              </div>
-              <ChevronRight className={`h-5 w-5 transition-transform ${expandedSections.attributes ? 'rotate-90' : ''}`} />
-            </button>
-            
-            {expandedSections.attributes && (
-              <div className="mt-3 space-y-3 pl-2">
-                {formData.attributes.map((attr, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <Input
-                      placeholder="Attribute name"
-                      value={attr.name}
-                      onChange={(e) => updateAttribute(index, 'name', e.target.value)}
-                      className="flex-1"
-                    />
-                    <Input
-                      placeholder="Value"
-                      value={attr.value}
-                      onChange={(e) => updateAttribute(index, 'value', e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => removeAttribute(index)}
-                      className="h-8 w-8"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M18 6 6 18"></path>
-                        <path d="m6 6 12 12"></path>
-                      </svg>
-                    </Button>
-                  </div>
-                ))}
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={addAttribute}
-                  className="mt-2"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Attribute
-                </Button>
-              </div>
-            )}
-            <Separator className="mt-3" />
-          </div>
+          <AttributesSection 
+            attributes={formData.attributes}
+            expanded={expandedSections.attributes}
+            toggleSection={() => toggleSection('attributes')}
+            addAttribute={addAttribute}
+            updateAttribute={updateAttribute}
+            removeAttribute={removeAttribute}
+          />
 
           {/* Discount Section */}
-          <div>
-            <button 
-              onClick={() => toggleSection('discount')}
-              className="w-full flex justify-between items-center"
-            >
-              <div>
-                <h3 className="font-medium text-sm">Add Discount {formData.discount.enabled ? `(${formData.discount.amount}${formData.discount.type === 'percentage' ? '%' : '₹'} Off)` : ''}</h3>
-                <p className="text-xs text-gray-500">Add discount on your products like 20% off</p>
-              </div>
-              <ChevronRight className={`h-5 w-5 transition-transform ${expandedSections.discount ? 'rotate-90' : ''}`} />
-            </button>
-            
-            {expandedSections.discount && (
-              <div className="mt-3 space-y-3 pl-2">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.discount.enabled}
-                    onChange={toggleDiscount}
-                    className="mr-2"
-                  />
-                  <span>Enable discount</span>
-                </div>
-                
-                {formData.discount.enabled && (
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-sm mb-1">Discount Type</label>
-                      <div className="flex gap-2">
-                        <Button
-                          type="button"
-                          variant={formData.discount.type === 'percentage' ? 'default' : 'outline'}
-                          onClick={() => updateDiscount('type', 'percentage')}
-                          className="flex-1"
-                        >
-                          Percentage (%)
-                        </Button>
-                        <Button
-                          type="button"
-                          variant={formData.discount.type === 'fixed' ? 'default' : 'outline'}
-                          onClick={() => updateDiscount('type', 'fixed')}
-                          className="flex-1"
-                        >
-                          Fixed Amount (₹)
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm mb-1">
-                        {formData.discount.type === 'percentage' ? 'Discount Percentage' : 'Discount Amount'}
-                      </label>
-                      <Input
-                        type="number"
-                        min="0"
-                        placeholder={formData.discount.type === 'percentage' ? 'Enter percentage' : 'Enter amount'}
-                        value={formData.discount.amount}
-                        onChange={(e) => updateDiscount('amount', e.target.value)}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-            <Separator className="mt-3" />
-          </div>
+          <DiscountSection 
+            discount={formData.discount}
+            expanded={expandedSections.discount}
+            toggleSection={() => toggleSection('discount')}
+            toggleDiscount={toggleDiscount}
+            updateDiscount={updateDiscount}
+          />
 
           {/* Categories Section */}
-          <div>
-            <button 
-              onClick={() => toggleSection('categories')}
-              className="w-full flex justify-between items-center"
-            >
-              <div>
-                <h3 className="font-medium text-sm">Add Categories {formData.categories.length > 0 ? `(${formData.categories.length})` : ''}</h3>
-                <p className="text-xs text-gray-500">Add Categories to the product</p>
-              </div>
-              <ChevronRight className={`h-5 w-5 transition-transform ${expandedSections.categories ? 'rotate-90' : ''}`} />
-            </button>
-            
-            {expandedSections.categories && (
-              <div className="mt-3 space-y-3 pl-2">
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {formData.categories.map((category, index) => (
-                    <div key={index} className="bg-gray-100 rounded-full px-3 py-1 flex items-center">
-                      <span className="text-sm">{category}</span>
-                      <button
-                        onClick={() => removeCategory(category)}
-                        className="ml-2"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 6 6 18"></path>
-                          <path d="m6 6 12 12"></path>
-                        </svg>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                
-                <div>
-                  <label className="block text-sm mb-1">Select or add categories</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {availableCategories.map((category) => (
-                      <Button
-                        key={category}
-                        variant="outline"
-                        className={`text-left justify-start ${formData.categories.includes(category) ? 'bg-gray-100' : ''}`}
-                        onClick={() => 
-                          formData.categories.includes(category) 
-                            ? removeCategory(category) 
-                            : addCategory(category)
-                        }
-                      >
-                        {category}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm mb-1">Add custom category</label>
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Enter category name"
-                      id="customCategory"
-                    />
-                    <Button
-                      onClick={() => {
-                        const input = document.getElementById('customCategory') as HTMLInputElement;
-                        if (input && input.value) {
-                          addCategory(input.value);
-                          input.value = '';
-                        }
-                      }}
-                    >
-                      Add
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-            <Separator className="mt-3" />
-          </div>
+          <CategoriesSection 
+            categories={formData.categories}
+            expanded={expandedSections.categories}
+            toggleSection={() => toggleSection('categories')}
+            addCategory={addCategory}
+            removeCategory={removeCategory}
+          />
 
           {/* Variations Section */}
-          <div>
-            <button 
-              onClick={() => toggleSection('variations')}
-              className="w-full flex justify-between items-center"
-            >
-              <div>
-                <h3 className="font-medium text-sm">Add Variation {formData.variations.length > 0 ? `(${formData.variations.length})` : ''}</h3>
-                <p className="text-xs text-gray-500">Add different variations of the products such as size, color, fabric option</p>
-              </div>
-              <ChevronRight className={`h-5 w-5 transition-transform ${expandedSections.variations ? 'rotate-90' : ''}`} />
-            </button>
-            
-            {expandedSections.variations && (
-              <div className="mt-3 space-y-5 pl-2">
-                {formData.variations.map((variation, variationIndex) => (
-                  <div key={variationIndex} className="border rounded-md p-3 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Input
-                        placeholder="Variation name (e.g., Size, Color)"
-                        value={variation.name}
-                        onChange={(e) => updateVariationName(variationIndex, e.target.value)}
-                        className="flex-1"
-                      />
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={() => removeVariation(variationIndex)}
-                        className="ml-2"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 6 6 18"></path>
-                          <path d="m6 6 12 12"></path>
-                        </svg>
-                      </Button>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="block text-sm">Options:</label>
-                      {variation.options.map((option, optionIndex) => (
-                        <div key={optionIndex} className="flex items-center gap-2">
-                          <Input
-                            placeholder={`Option ${optionIndex + 1}`}
-                            value={option}
-                            onChange={(e) => updateVariationOption(variationIndex, optionIndex, e.target.value)}
-                            className="flex-1"
-                          />
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={() => removeVariationOption(variationIndex, optionIndex)}
-                            className="h-8 w-8"
-                            disabled={variation.options.length <= 1}
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M18 6 6 18"></path>
-                              <path d="m6 6 12 12"></path>
-                            </svg>
-                          </Button>
-                        </div>
-                      ))}
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => addVariationOption(variationIndex)}
-                        className="w-full mt-2"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Option
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                
-                <Button 
-                  variant="outline"
-                  onClick={addVariation}
-                  className="w-full"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Variation
-                </Button>
-              </div>
-            )}
-            <Separator className="mt-3" />
-          </div>
+          <VariationsSection 
+            variations={formData.variations}
+            expanded={expandedSections.variations}
+            toggleSection={() => toggleSection('variations')}
+            addVariation={addVariation}
+            updateVariationName={updateVariationName}
+            addVariationOption={addVariationOption}
+            updateVariationOption={updateVariationOption}
+            removeVariationOption={removeVariationOption}
+            removeVariation={removeVariation}
+          />
 
           {/* Expiry Date Section */}
-          <div>
-            <button 
-              onClick={() => toggleSection('expiryDate')}
-              className="w-full flex justify-between items-center"
-            >
-              <div className="flex items-center">
-                <div>
-                  <h3 className="font-medium text-sm">Expiry Date {formData.expiryDate ? `(${formData.expiryDate})` : ''}</h3>
-                  <p className="text-xs text-gray-500">Add expiry date of the product</p>
-                </div>
-              </div>
-              <ChevronRight className={`h-5 w-5 transition-transform ${expandedSections.expiryDate ? 'rotate-90' : ''}`} />
-            </button>
-            
-            {expandedSections.expiryDate && (
-              <div className="mt-3 pl-2">
-                <Input
-                  type="date"
-                  name="expiryDate"
-                  value={formData.expiryDate}
-                  onChange={handleInputChange}
-                  min={new Date().toISOString().split('T')[0]}
-                />
-              </div>
-            )}
-            <Separator className="mt-3" />
-          </div>
+          <DateTimeSection 
+            title="Expiry Date"
+            description="Add expiry date of the product"
+            expanded={expandedSections.expiryDate}
+            toggleSection={() => toggleSection('expiryDate')}
+            value={formData.expiryDate}
+            handleChange={handleInputChange}
+            inputType="date"
+            name="expiryDate"
+            minDate={new Date().toISOString().split('T')[0]}
+          />
 
           {/* Schedule Publishing Section */}
-          <div>
-            <button 
-              onClick={() => toggleSection('scheduledTime')}
-              className="w-full flex justify-between items-center"
-            >
-              <div>
-                <h3 className="font-medium text-sm">Schedule Publishing {formData.scheduledTime ? `(${formData.scheduledTime})` : ''}</h3>
-                <p className="text-xs text-gray-500">Select the time when this product will be published</p>
-              </div>
-              <ChevronRight className={`h-5 w-5 transition-transform ${expandedSections.scheduledTime ? 'rotate-90' : ''}`} />
-            </button>
-            
-            {expandedSections.scheduledTime && (
-              <div className="mt-3 pl-2">
-                <Input
-                  type="datetime-local"
-                  name="scheduledTime"
-                  value={formData.scheduledTime}
-                  onChange={handleInputChange}
-                  min={new Date().toISOString().slice(0, 16)}
-                />
-              </div>
-            )}
-            <Separator className="mt-3" />
-          </div>
+          <DateTimeSection 
+            title="Schedule Publishing"
+            description="Select the time when this product will be published"
+            expanded={expandedSections.scheduledTime}
+            toggleSection={() => toggleSection('scheduledTime')}
+            value={formData.scheduledTime}
+            handleChange={handleInputChange}
+            inputType="datetime-local"
+            name="scheduledTime"
+            minDate={new Date().toISOString().slice(0, 16)}
+          />
         </div>
       </div>
     </div>

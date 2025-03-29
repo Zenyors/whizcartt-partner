@@ -12,11 +12,6 @@ interface SettingsState {
     storeAnalytics: boolean;
     marketingEmails: boolean;
   };
-  displaySettings: {
-    compactView: boolean;
-    highContrast: boolean;
-    fontSize: 'small' | 'medium' | 'large';
-  };
 }
 
 export function useSettings() {
@@ -40,11 +35,6 @@ export function useSettings() {
         shareData: false,
         storeAnalytics: true,
         marketingEmails: false
-      },
-      displaySettings: {
-        compactView: false,
-        highContrast: false,
-        fontSize: 'medium'
       }
     };
   });
@@ -94,28 +84,11 @@ export function useSettings() {
     });
   };
 
-  const updateDisplaySetting = <K extends keyof SettingsState['displaySettings']>(
-    key: K, 
-    value: SettingsState['displaySettings'][K]
-  ) => {
-    setSettings(prev => ({
-      ...prev,
-      displaySettings: {
-        ...prev.displaySettings,
-        [key]: value
-      }
-    }));
-    toast({
-      title: "Display setting updated",
-    });
-  };
-
   return {
     settings,
     updateNotifications,
     updateDarkMode,
     updateLanguage,
-    updatePrivacySetting,
-    updateDisplaySetting
+    updatePrivacySetting
   };
 }

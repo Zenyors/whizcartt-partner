@@ -15,13 +15,13 @@ const Orders: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   
   const filteredOrders = orders.filter(order => 
-    order.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
     order.id.toString().includes(searchQuery)
   );
   
   const pendingOrders = filteredOrders.filter(order => order.status === 'pending');
   const completedOrders = filteredOrders.filter(order => order.status === 'completed');
-  const cancelledOrders = filteredOrders.filter(order => order.status === 'cancelled');
+  const deniedOrders = filteredOrders.filter(order => order.status === 'denied');
+  const acceptedOrders = filteredOrders.filter(order => order.status === 'accepted');
 
   return (
     <div className="min-h-screen pb-20 bg-gray-50">
@@ -65,9 +65,9 @@ const Orders: React.FC = () => {
               Completed
               <span className="ml-1 text-xs">({completedOrders.length})</span>
             </TabsTrigger>
-            <TabsTrigger value="cancelled">
-              Cancelled
-              <span className="ml-1 text-xs">({cancelledOrders.length})</span>
+            <TabsTrigger value="denied">
+              Denied
+              <span className="ml-1 text-xs">({deniedOrders.length})</span>
             </TabsTrigger>
           </TabsList>
           
@@ -89,9 +89,9 @@ const Orders: React.FC = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="cancelled" className="mt-4">
+          <TabsContent value="denied" className="mt-4">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              <OrdersList orders={cancelledOrders} onStatusChange={() => setOrders(getOrders())} />
+              <OrdersList orders={deniedOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>
           </TabsContent>
         </Tabs>

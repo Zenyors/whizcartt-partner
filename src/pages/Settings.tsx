@@ -6,7 +6,6 @@ import PersonalInformationSection from '@/components/settings/PersonalInformatio
 import StoreSettingsSection from '@/components/settings/StoreSettingsSection';
 import NotificationsSection from '@/components/settings/NotificationsSection';
 import PrivacySettingsSection from '@/components/settings/PrivacySettingsSection';
-import DisplaySettingsSection from '@/components/settings/DisplaySettingsSection';
 import LanguageSection from '@/components/settings/LanguageSection';
 import LogoutButton from '@/components/settings/LogoutButton';
 import VersionInfo from '@/components/settings/VersionInfo';
@@ -28,9 +27,6 @@ const Settings: React.FC = () => {
       
       {/* Privacy Section */}
       <PrivacySettingsSection />
-      
-      {/* Display Section */}
-      <DisplaySettingsSection />
       
       {/* Language Section */}
       <LanguageSection />

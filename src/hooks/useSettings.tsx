@@ -4,7 +4,6 @@ import { useToast } from '@/hooks/use-toast';
 
 interface SettingsState {
   notifications: boolean;
-  darkMode: boolean;
   language: string;
   availableLanguages: { value: string; label: string }[];
   privacySettings: {
@@ -24,7 +23,6 @@ export function useSettings() {
     // Default settings
     const defaultSettings = {
       notifications: true,
-      darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
       language: 'english',
       availableLanguages: [
         { value: 'english', label: 'English' },
@@ -54,16 +52,8 @@ export function useSettings() {
     return defaultSettings;
   });
 
-  // Apply dark mode on initial load and when settings change
+  // Save settings to localStorage when they change
   useEffect(() => {
-    // Apply dark mode class to the HTML element
-    if (settings.darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    
-    // Save settings to localStorage whenever they change
     localStorage.setItem('userSettings', JSON.stringify(settings));
   }, [settings]);
 
@@ -74,16 +64,6 @@ export function useSettings() {
       description: value 
         ? "You will now receive notifications" 
         : "You will no longer receive notifications",
-    });
-  };
-
-  const updateDarkMode = (value: boolean) => {
-    setSettings(prev => ({ ...prev, darkMode: value }));
-    toast({
-      title: value ? "Dark mode enabled" : "Light mode enabled",
-      description: value 
-        ? "App theme switched to dark mode" 
-        : "App theme switched to light mode",
     });
   };
 
@@ -123,7 +103,6 @@ export function useSettings() {
   return {
     settings,
     updateNotifications,
-    updateDarkMode,
     updateLanguage,
     updatePrivacySetting
   };

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useToast } from './ui/use-toast';
 import { Button } from './ui/button';
-import { Store, Copy } from 'lucide-react';
+import { Store, Copy, BarChart } from 'lucide-react';
 import { Switch } from './ui/switch';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,6 +44,10 @@ const StoreStatus: React.FC<StoreStatusProps> = ({ initialStatus = false }) => {
         });
       });
   };
+  
+  const handleAddAdvertisement = () => {
+    navigate('/create-ad');
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-sm mb-4">
@@ -79,6 +83,16 @@ const StoreStatus: React.FC<StoreStatusProps> = ({ initialStatus = false }) => {
             >
               <Copy size={16} />
               Copy Link
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="flex items-center gap-1 text-xs font-normal px-3 py-2"
+              onClick={handleAddAdvertisement}
+            >
+              <BarChart size={16} />
+              Add
             </Button>
           </div>
         </div>

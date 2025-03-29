@@ -1,7 +1,5 @@
 
 import React, { useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Camera } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface StoreCoverProps {
@@ -53,14 +51,6 @@ const StoreCover: React.FC<StoreCoverProps> = ({
           <span className="text-gray-500">Add Cover Image</span>
         </div>
       )}
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="absolute left-4 top-4 h-10 w-10 bg-white rounded-full flex items-center justify-center p-0"
-        onClick={() => coverInputRef.current?.click()}
-      >
-        <Camera className="h-5 w-5" />
-      </Button>
       <input 
         type="file" 
         ref={coverInputRef}

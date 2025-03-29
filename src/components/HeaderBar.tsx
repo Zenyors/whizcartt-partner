@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Bell, User, Plus } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from './ui/use-toast';
+import ProfileSidebar from './ProfileSidebar';
 
 interface HeaderBarProps {
   companyName: string;
@@ -14,6 +15,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
   partnerText = "Partner" 
 }) => {
   const { toast } = useToast();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const handleNotification = () => {
     toast({
@@ -22,11 +24,8 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
     });
   };
   
-  const handleProfile = () => {
-    toast({
-      title: "Profile",
-      description: "Profile functionality coming soon",
-    });
+  const toggleSidebar = () => {
+    setSidebarOpen(prev => !prev);
   };
   
   const handleNewAction = () => {
@@ -37,40 +36,44 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between w-full p-4">
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="rounded-full"
-        onClick={handleProfile}
-      >
-        <User className="text-gray-600" />
-      </Button>
-      
-      <div className="flex flex-col items-center">
-        <span className="text-whiz-green font-bold text-2xl">{companyName}</span>
-        {partnerText && <span className="text-sm text-gray-500">{partnerText}</span>}
-      </div>
-      
-      <div className="flex gap-2">
+    <>
+      <div className="flex items-center justify-between w-full p-4">
         <Button 
           variant="ghost" 
           size="icon" 
           className="rounded-full"
-          onClick={handleNotification}
+          onClick={toggleSidebar}
         >
-          <Bell className="text-gray-600" />
+          <User className="text-gray-600" />
         </Button>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="rounded-full"
-          onClick={handleNewAction}
-        >
-          <Plus className="text-gray-600" />
-        </Button>
+        
+        <div className="flex flex-col items-center">
+          <span className="text-whiz-green font-bold text-2xl">{companyName}</span>
+          {partnerText && <span className="text-sm text-gray-500 font-light">{partnerText}</span>}
+        </div>
+        
+        <div className="flex gap-2">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full"
+            onClick={handleNotification}
+          >
+            <Bell className="text-gray-600" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full"
+            onClick={handleNewAction}
+          >
+            <Plus className="text-gray-600" />
+          </Button>
+        </div>
       </div>
-    </div>
+      
+      <ProfileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    </>
   );
 };
 

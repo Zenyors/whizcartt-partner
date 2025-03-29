@@ -24,6 +24,8 @@ const Orders: React.FC = () => {
   const completedOrders = filteredOrders.filter(order => order.status === 'completed');
   const deniedOrders = filteredOrders.filter(order => order.status === 'denied');
   const acceptedOrders = filteredOrders.filter(order => order.status === 'accepted');
+  const dispatchedOrders = filteredOrders.filter(order => order.status === 'dispatched');
+  const deliveredOrders = filteredOrders.filter(order => order.status === 'delivered');
 
   return (
     <div className="min-h-screen pb-20 bg-gray-50">
@@ -70,7 +72,7 @@ const Orders: React.FC = () => {
         
         {/* Tabs */}
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="all">
               All
               <span className="ml-1 text-xs">({filteredOrders.length})</span>
@@ -79,13 +81,21 @@ const Orders: React.FC = () => {
               Pending
               <span className="ml-1 text-xs">({pendingOrders.length})</span>
             </TabsTrigger>
+            <TabsTrigger value="accepted">
+              Accepted
+              <span className="ml-1 text-xs">({acceptedOrders.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="dispatched">
+              Dispatched
+              <span className="ml-1 text-xs">({dispatchedOrders.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="delivered">
+              Delivered
+              <span className="ml-1 text-xs">({deliveredOrders.length})</span>
+            </TabsTrigger>
             <TabsTrigger value="completed">
               Completed
               <span className="ml-1 text-xs">({completedOrders.length})</span>
-            </TabsTrigger>
-            <TabsTrigger value="denied">
-              Denied
-              <span className="ml-1 text-xs">({deniedOrders.length})</span>
             </TabsTrigger>
           </TabsList>
           
@@ -101,15 +111,27 @@ const Orders: React.FC = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="completed" className="mt-4">
+          <TabsContent value="accepted" className="mt-4">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              <OrdersList orders={completedOrders} onStatusChange={() => setOrders(getOrders())} />
+              <OrdersList orders={acceptedOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>
           </TabsContent>
           
-          <TabsContent value="denied" className="mt-4">
+          <TabsContent value="dispatched" className="mt-4">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              <OrdersList orders={deniedOrders} onStatusChange={() => setOrders(getOrders())} />
+              <OrdersList orders={dispatchedOrders} onStatusChange={() => setOrders(getOrders())} />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="delivered" className="mt-4">
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <OrdersList orders={deliveredOrders} onStatusChange={() => setOrders(getOrders())} />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="completed" className="mt-4">
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <OrdersList orders={completedOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>
           </TabsContent>
         </Tabs>

@@ -2,6 +2,7 @@
 import React from 'react';
 import ProductCard, { Product } from './ProductCard';
 import { AlertCircle, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductsListProps {
   products: Product[];
@@ -16,6 +17,13 @@ const ProductsList: React.FC<ProductsListProps> = ({
   onEdit,
   onDelete
 }) => {
+  const navigate = useNavigate();
+  
+  const handleEdit = (id: number) => {
+    // Directly navigate to edit page
+    navigate(`/edit-product/${id}`);
+  };
+
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -35,7 +43,7 @@ const ProductsList: React.FC<ProductsListProps> = ({
           key={product.id}
           product={product}
           onToggleStatus={onToggleStatus}
-          onEdit={onEdit}
+          onEdit={handleEdit}
           onDelete={onDelete}
         />
       ))}

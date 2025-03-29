@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useToast } from '@/components/ui/use-toast';
-import { useUser } from '@/contexts/UserContext';
+import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import StoreViewHeader from '@/components/store/StoreView/StoreViewHeader';
@@ -15,25 +14,55 @@ interface StoreData {
   coverImage: string;
 }
 
+// Product interface to match what we save from the product form
+interface Product {
+  id: number;
+  name: string;
+  price: string;
+  stock: number;
+  description: string;
+  categories: string[];
+  discount: {
+    enabled: boolean;
+    type: 'percentage' | 'fixed';
+    amount: string;
+  };
+  attributes: Array<{ name: string; value: string }>;
+  variations: Array<{ name: string; options: string[] }>;
+  expiryDate: string;
+  scheduledTime: string;
+  images?: string[];
+  createdAt: string;
+}
+
 const StoreView: React.FC = () => {
   const { toast } = useToast();
-  const { userProfile } = useUser();
   const navigate = useNavigate();
   const [isStoreActive, setIsStoreActive] = useState(true);
   
   // Store related states
-  const [storeData, setStoreData] = useState<StoreData>({
-    name: "My Store",
-    address: "",
-    logoImage: "",
-    coverImage: ""
+  const [storeData, setStoreData] = useState<StoreData>(() => {
+    const savedStore = localStorage.getItem('storeData');
+    return savedStore 
+      ? JSON.parse(savedStore) 
+      : {
+          name: "My Store",
+          address: "",
+          logoImage: "",
+          coverImage: ""
+        };
   });
   
-  // Products state
-  const [products, setProducts] = useState(() => {
+  // Products state - load from localStorage
+  const [products, setProducts] = useState<Product[]>(() => {
     const savedProducts = localStorage.getItem('storeProducts');
     return savedProducts ? JSON.parse(savedProducts) : [];
   });
+
+  // Save store data to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('storeData', JSON.stringify(storeData));
+  }, [storeData]);
   
   // Save products to localStorage when they change
   useEffect(() => {
@@ -49,10 +78,20 @@ const StoreView: React.FC = () => {
   };
   
   const handleEditProduct = (id: number) => {
-    // For now just show a toast, in the future could navigate to edit page
+    // In a full implementation, navigate to the edit product page with this ID
     toast({
       title: "Edit Product",
       description: `Editing product #${id}`,
+    });
+    // navigate(`/edit-product/${id}`);
+  };
+  
+  const handleDeleteProduct = (id: number) => {
+    const updatedProducts = products.filter(product => product.id !== id);
+    setProducts(updatedProducts);
+    toast({
+      title: "Product deleted",
+      description: "Product has been removed from your store",
     });
   };
   
@@ -125,7 +164,8 @@ const StoreView: React.FC = () => {
       
       <StoreContent 
         products={products} 
-        handleEditProduct={handleEditProduct} 
+        handleEditProduct={handleEditProduct}
+        handleDeleteProduct={handleDeleteProduct}
       />
       
       <BottomNav />

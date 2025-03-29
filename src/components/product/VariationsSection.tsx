@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { ChevronRight, Plus } from 'lucide-react';
+import { ChevronRight, Plus, Trash } from 'lucide-react';
 
 interface Variation {
   name: string;
@@ -40,51 +40,45 @@ const VariationsSection: React.FC<VariationsSectionProps> = ({
         className="w-full flex justify-between items-center"
       >
         <div>
-          <h3 className="font-semibold text-sm">Add Variation {variations.length > 0 ? `(${variations.length})` : ''}</h3>
-          <p className="text-xs text-gray-500">Add different variations of the products such as size, color, fabric option</p>
+          <h3 className="font-semibold text-sm">Add Variations ({variations.length} Added)</h3>
+          <p className="text-xs text-gray-500">Add variations like size, color etc.</p>
         </div>
         <ChevronRight className={`h-5 w-5 transition-transform ${expanded ? 'rotate-90' : ''}`} />
       </button>
       
       {expanded && (
-        <div className="mt-3 space-y-5 pl-2">
+        <div className="mt-3 space-y-4 pl-2">
           {variations.map((variation, variationIndex) => (
-            <div key={variationIndex} className="border rounded-md p-3 space-y-3">
-              <div className="flex items-center justify-between">
+            <div key={variationIndex} className="border rounded-md p-3">
+              <div className="flex items-center justify-between mb-2">
                 <Input
-                  placeholder="Variation name (e.g., Size, Color)"
+                  placeholder="Variation name (e.g. Size, Color)"
                   value={variation.name}
                   onChange={(e) => updateVariationName(variationIndex, e.target.value)}
-                  className="flex-1"
+                  className="flex-1 mr-2"
                 />
                 <Button 
                   variant="ghost" 
-                  size="icon" 
+                  size="icon"
                   onClick={() => removeVariation(variationIndex)}
-                  className="ml-2"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 6 6 18"></path>
-                    <path d="m6 6 12 12"></path>
-                  </svg>
+                  <Trash className="h-4 w-4" />
                 </Button>
               </div>
               
-              <div className="space-y-2">
-                <label className="block text-sm">Options:</label>
+              <div className="space-y-2 mt-2">
                 {variation.options.map((option, optionIndex) => (
-                  <div key={optionIndex} className="flex items-center gap-2">
+                  <div key={optionIndex} className="flex items-center">
                     <Input
-                      placeholder={`Option ${optionIndex + 1}`}
+                      placeholder="Option value (e.g. Small, Red)"
                       value={option}
                       onChange={(e) => updateVariationOption(variationIndex, optionIndex, e.target.value)}
-                      className="flex-1"
+                      className="flex-1 mr-2"
                     />
                     <Button 
                       variant="ghost" 
-                      size="icon" 
+                      size="icon"
                       onClick={() => removeVariationOption(variationIndex, optionIndex)}
-                      className="h-8 w-8"
                       disabled={variation.options.length <= 1}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -94,11 +88,12 @@ const VariationsSection: React.FC<VariationsSectionProps> = ({
                     </Button>
                   </div>
                 ))}
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => addVariationOption(variationIndex)}
-                  className="w-full mt-2"
+                  className="mt-2"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Add Option
@@ -108,9 +103,10 @@ const VariationsSection: React.FC<VariationsSectionProps> = ({
           ))}
           
           <Button 
-            variant="outline"
-            onClick={addVariation}
-            className="w-full"
+            variant="outline" 
+            size="sm" 
+            onClick={addVariation} 
+            className="mt-2"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Variation

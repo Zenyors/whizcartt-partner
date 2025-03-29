@@ -1,14 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Package, Plus, Camera } from 'lucide-react';
+import { Package, Plus, Trash2, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
+// Product interface to match what we save from the product form
 interface Product {
   id: number;
   name: string;
-  price: number | string;
+  price: string | number;
   stock: number;
   description?: string;
   categories?: string[];
@@ -18,24 +25,23 @@ interface Product {
     amount: string;
   };
   images?: string[];
+  attributes?: Array<{ name: string; value: string }>;
 }
 
 interface StoreContentProps {
   products: Product[];
   handleEditProduct: (id: number) => void;
+  handleDeleteProduct: (id: number) => void;
 }
 
 const StoreContent: React.FC<StoreContentProps> = ({ 
   products, 
-  handleEditProduct 
+  handleEditProduct,
+  handleDeleteProduct
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [categories, setCategories] = useState([
-    { id: 'all', name: 'All Categories' },
-    { id: 'groceries', name: 'Groceries' },
-    { id: 'fruits', name: 'Fruits' },
-    { id: 'bakery', name: 'Bakery' },
-    { id: 'dairy', name: 'Dairy' },
+    { id: 'all', name: 'All Categories' }
   ]);
   const navigate = useNavigate();
 
@@ -160,13 +166,29 @@ const StoreContent: React.FC<StoreContentProps> = ({
                   )}
                 </div>
               </div>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={() => handleEditProduct(product.id)}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-more-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-more-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white">
+                  <DropdownMenuItem 
+                    className="cursor-pointer flex items-center"
+                    onClick={() => handleEditProduct(product.id)}
+                  >
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="cursor-pointer flex items-center text-red-500"
+                    onClick={() => handleDeleteProduct(product.id)}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ))
         ) : (

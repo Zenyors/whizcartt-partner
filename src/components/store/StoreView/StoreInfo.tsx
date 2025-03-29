@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link, Camera, MapPin, Edit } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 interface StoreData {
   name: string;
@@ -32,6 +33,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
   handleUploadStoreLogo,
   handleUploadCoverImage
 }) => {
+  const { toast } = useToast();
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [tempName, setTempName] = useState(storeData.name);
@@ -43,6 +45,17 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
   const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Image must be less than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
@@ -56,6 +69,17 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
   const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Image must be less than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
@@ -67,11 +91,29 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
   };
   
   const saveName = () => {
+    if (tempName.trim() === '') {
+      toast({
+        title: "Invalid name",
+        description: "Store name cannot be empty",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     handleUpdateStoreName(tempName);
     setIsEditingName(false);
   };
   
   const saveAddress = () => {
+    if (tempAddress.trim() === '') {
+      toast({
+        title: "Invalid address",
+        description: "Address cannot be empty",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     handleAddAddress(tempAddress);
     setIsEditingAddress(false);
   };

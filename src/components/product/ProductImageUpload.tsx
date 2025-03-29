@@ -2,6 +2,7 @@
 import React from 'react';
 import { Upload, X } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductImageUploadProps {
   productImages: string[];
@@ -12,13 +13,40 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
   productImages, 
   setProductImages 
 }) => {
+  const { toast } = useToast();
+  
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Image must be less than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Check if adding this image would exceed the limit
+      if (productImages.length >= 5) {
+        toast({
+          title: "Maximum images reached",
+          description: "You can only add up to 5 images",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
           setProductImages([...productImages, reader.result]);
+          toast({
+            title: "Image added",
+            description: "Product image uploaded successfully",
+          });
         }
       };
       reader.readAsDataURL(file);
@@ -27,6 +55,10 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
 
   const removeImage = (index: number) => {
     setProductImages(productImages.filter((_, i) => i !== index));
+    toast({
+      title: "Image removed",
+      description: "Product image removed successfully",
+    });
   };
 
   return (

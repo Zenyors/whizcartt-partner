@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { ChevronRight } from 'lucide-react';
 
@@ -34,7 +33,7 @@ const DateTimeSection: React.FC<DateTimeSectionProps> = ({
         className="w-full flex justify-between items-center"
       >
         <div>
-          <h3 className="font-semibold text-sm">{title} {value ? `(${value})` : ''}</h3>
+          <h3 className="font-semibold text-sm">{title}</h3>
           <p className="text-xs text-gray-500">{description}</p>
         </div>
         <ChevronRight className={`h-5 w-5 transition-transform ${expanded ? 'rotate-90' : ''}`} />
@@ -42,12 +41,13 @@ const DateTimeSection: React.FC<DateTimeSectionProps> = ({
       
       {expanded && (
         <div className="mt-3 pl-2">
-          <Input
+          <input
             type={inputType}
             name={name}
             value={value}
             onChange={handleChange}
             min={minDate}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       )}

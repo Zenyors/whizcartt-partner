@@ -72,12 +72,6 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
           </div>
         )}
       </div>
-
-      {productImages.length > 0 && (
-        <div className="flex justify-end mb-4">
-          <span className="text-sm text-gray-500">Drag to reorder</span>
-        </div>
-      )}
     </>
   );
 };

@@ -26,38 +26,38 @@ const UploadOptions: React.FC<UploadOptionsProps> = ({
     <div className="grid grid-cols-2 gap-4">
       <Button 
         variant="outline" 
-        className="flex flex-col items-center justify-center p-6"
+        className="flex flex-col items-center justify-center p-6 h-auto"
         onClick={handleScanBarcode}
       >
-        <ScanBarcode className="h-10 w-10 mb-2" />
-        <span>Scan Barcode</span>
+        <ScanBarcode className="h-8 w-8 mb-2" />
+        <span className="text-sm">Scan Barcode</span>
       </Button>
       
       <Button 
         variant="outline" 
-        className="flex flex-col items-center justify-center p-6"
+        className="flex flex-col items-center justify-center p-6 h-auto"
         onClick={handleUseCamera}
       >
-        <Camera className="h-10 w-10 mb-2" />
-        <span>Use Camera</span>
+        <Camera className="h-8 w-8 mb-2" />
+        <span className="text-sm">Use Camera</span>
       </Button>
       
       <Button 
         variant="outline" 
-        className="flex flex-col items-center justify-center p-6"
+        className="flex flex-col items-center justify-center p-6 h-auto"
         onClick={handleGallerySelect}
       >
-        <Image className="h-10 w-10 mb-2" />
-        <span>From Gallery</span>
+        <Image className="h-8 w-8 mb-2" />
+        <span className="text-sm">From Gallery</span>
       </Button>
       
       <Button 
         variant="outline" 
-        className="flex flex-col items-center justify-center p-6"
+        className="flex flex-col items-center justify-center p-6 h-auto"
         onClick={handleFileSelect}
       >
-        <FileImage className="h-10 w-10 mb-2" />
-        <span>Choose File</span>
+        <FileImage className="h-8 w-8 mb-2" />
+        <span className="text-sm">Choose File</span>
       </Button>
       
       <input 

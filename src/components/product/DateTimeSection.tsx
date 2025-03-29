@@ -30,7 +30,7 @@ const DateTimeSection: React.FC<DateTimeSectionProps> = ({
     <div>
       <button 
         onClick={toggleSection}
-        className="w-full flex justify-between items-center"
+        className="w-full flex justify-between items-center py-2"
       >
         <div>
           <h3 className="font-semibold text-sm">{title}</h3>
@@ -40,7 +40,7 @@ const DateTimeSection: React.FC<DateTimeSectionProps> = ({
       </button>
       
       {expanded && (
-        <div className="mt-3 pl-2">
+        <div className="mt-3 pl-2 mb-4">
           <input
             type={inputType}
             name={name}
@@ -51,7 +51,7 @@ const DateTimeSection: React.FC<DateTimeSectionProps> = ({
           />
         </div>
       )}
-      <Separator className="mt-3" />
+      <Separator className="my-3" />
     </div>
   );
 };

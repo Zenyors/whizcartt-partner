@@ -30,7 +30,7 @@ const DiscountSection: React.FC<DiscountSectionProps> = ({
     <div>
       <button 
         onClick={toggleSection}
-        className="w-full flex justify-between items-center"
+        className="w-full flex justify-between items-center py-2"
       >
         <div>
           <h3 className="font-semibold text-sm">Add Discount {discount.enabled ? `(${discount.amount}${discount.type === 'percentage' ? '%' : '₹'} Off)` : ''}</h3>
@@ -40,21 +40,21 @@ const DiscountSection: React.FC<DiscountSectionProps> = ({
       </button>
       
       {expanded && (
-        <div className="mt-3 space-y-3 pl-2">
+        <div className="mt-3 space-y-3 pl-2 mb-4">
           <div className="flex items-center">
             <input
               type="checkbox"
               checked={discount.enabled}
               onChange={toggleDiscount}
-              className="mr-2"
+              className="mr-2 h-4 w-4"
             />
-            <span>Enable discount</span>
+            <span className="text-sm">Enable discount</span>
           </div>
           
           {discount.enabled && (
             <div className="space-y-3">
               <div>
-                <label className="block text-sm mb-1">Discount Type</label>
+                <label className="block text-sm mb-2">Discount Type</label>
                 <div className="flex gap-2">
                   <Button
                     type="button"
@@ -76,7 +76,7 @@ const DiscountSection: React.FC<DiscountSectionProps> = ({
               </div>
               
               <div>
-                <label className="block text-sm mb-1">
+                <label className="block text-sm mb-2">
                   {discount.type === 'percentage' ? 'Discount Percentage' : 'Discount Amount'}
                 </label>
                 <Input
@@ -91,7 +91,7 @@ const DiscountSection: React.FC<DiscountSectionProps> = ({
           )}
         </div>
       )}
-      <Separator className="mt-3" />
+      <Separator className="my-3" />
     </div>
   );
 };

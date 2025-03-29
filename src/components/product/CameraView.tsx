@@ -34,13 +34,13 @@ const CameraView: React.FC<CameraViewProps> = ({
           <Button 
             variant="outline" 
             onClick={switchCamera}
-            className="bg-white"
+            className="bg-white/80 backdrop-blur-sm p-2 h-10 w-10 rounded-full flex items-center justify-center"
           >
             <RotateCcw className="h-5 w-5" />
           </Button>
           <Button 
             onClick={captureImage}
-            className="bg-white text-black hover:bg-gray-100"
+            className="bg-white/80 backdrop-blur-sm text-black hover:bg-gray-100/80 px-4 py-2"
           >
             Capture
           </Button>

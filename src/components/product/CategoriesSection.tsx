@@ -34,7 +34,7 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({
     <div>
       <button 
         onClick={toggleSection}
-        className="w-full flex justify-between items-center"
+        className="w-full flex justify-between items-center py-2"
       >
         <div>
           <h3 className="font-semibold text-sm">Add Categories {categories.length > 0 ? `(${categories.length})` : ''}</h3>
@@ -44,7 +44,7 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({
       </button>
       
       {expanded && (
-        <div className="mt-3 space-y-3 pl-2">
+        <div className="mt-3 space-y-4 pl-2 mb-4">
           <div className="flex flex-wrap gap-2 mb-3">
             {categories.map((category, index) => (
               <div key={index} className="bg-gray-100 rounded-full px-3 py-1 flex items-center">
@@ -63,7 +63,7 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({
           </div>
           
           <div>
-            <label className="block text-sm mb-1">Select or add categories</label>
+            <label className="block text-sm mb-2">Select or add categories</label>
             <div className="grid grid-cols-2 gap-2">
               {availableCategories.map((category) => (
                 <Button
@@ -83,7 +83,7 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({
           </div>
           
           <div>
-            <label className="block text-sm mb-1">Add custom category</label>
+            <label className="block text-sm mb-2">Add custom category</label>
             <div className="flex gap-2">
               <Input
                 placeholder="Enter category name"
@@ -97,7 +97,7 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({
           </div>
         </div>
       )}
-      <Separator className="mt-3" />
+      <Separator className="my-3" />
     </div>
   );
 };

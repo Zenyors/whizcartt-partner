@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Upload, Plus, X } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
 interface ProductImageUploadProps {
@@ -67,22 +67,6 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
             </div>
             <span className="text-sm text-gray-500">Add Product</span>
           </label>
-          
-          {/* Add more empty slots based on how many images are already uploaded */}
-          {productImages.length < 5 && Array.from({ length: Math.min(2, 5 - productImages.length) }).map((_, index) => (
-            <label key={index} className="bg-gray-100 aspect-square rounded-md flex flex-col items-center justify-center cursor-pointer">
-              <input 
-                type="file" 
-                accept="image/*" 
-                className="hidden" 
-                onChange={handleImageUpload}
-              />
-              <div className="rounded-full border border-gray-400 p-2 mb-2">
-                <Plus className="h-5 w-5 text-gray-500" />
-              </div>
-              <span className="text-sm text-gray-500">Add More</span>
-            </label>
-          ))}
         </div>
       </div>
 

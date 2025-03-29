@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Bell, Plus } from 'lucide-react';
+import { Bell, Plus } from 'lucide-react';
 
 const StoreViewHeader: React.FC = () => {
   const navigate = useNavigate();
@@ -10,7 +10,9 @@ const StoreViewHeader: React.FC = () => {
   return (
     <div className="flex items-center justify-between p-4 bg-white border-b">
       <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-        <ArrowLeft className="h-5 w-5" />
+        <div className="h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+        </div>
       </Button>
       
       <div className="flex items-center">

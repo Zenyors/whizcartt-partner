@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Camera, LinkIcon, MapPin, Package, Store } from 'lucide-react';
+import { Link, Camera, MapPin } from 'lucide-react';
 
 interface StoreInfoProps {
   isStoreActive: boolean;
@@ -20,88 +19,66 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
   handleUploadCoverImage
 }) => {
   return (
-    <div className="relative bg-gray-100">
-      {/* Cover Image */}
-      <div className="relative h-36 w-full bg-gray-200 overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Store className="h-16 w-16 text-gray-400" />
-        </div>
+    <div className="relative bg-gray-200 pb-6">
+      {/* Cover Image with camera icon */}
+      <div className="h-40 w-full flex items-center justify-center relative">
         <Button 
-          variant="ghost"
-          size="icon"
-          className="absolute bottom-2 right-2 h-8 w-8 bg-white rounded-full"
+          variant="ghost" 
+          size="icon" 
+          className="absolute left-4 top-4 h-10 w-10 bg-white rounded-full flex items-center justify-center p-0"
           onClick={handleUploadCoverImage}
         >
-          <Camera className="h-4 w-4" />
+          <Camera className="h-5 w-5" />
         </Button>
       </div>
       
-      {/* Store Logo/Avatar (positioned to overlap cover and info) */}
-      <div className="absolute left-1/2 transform -translate-x-1/2" style={{ top: "140px" }}>
-        <div className="relative">
-          <Avatar className="h-24 w-24 border-4 border-white bg-white">
-            <AvatarFallback>
-              <Package className="h-12 w-12 text-gray-400" />
-            </AvatarFallback>
-            <AvatarImage src="" />
-          </Avatar>
+      {/* Store Logo/Avatar */}
+      <div className="absolute left-1/2 transform -translate-x-1/2" style={{ top: "120px" }}>
+        <div className="bg-white p-3 rounded-lg shadow-sm w-40 h-40 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+            <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+            <path d="M12 3v6"/>
+          </svg>
           <Button 
             variant="ghost"
             size="icon"
-            className="absolute bottom-0 right-0 h-7 w-7 bg-white rounded-full"
+            className="absolute bottom-2 right-2 h-8 w-8 bg-white rounded-full border border-gray-300 flex items-center justify-center p-0"
             onClick={handleUploadStoreLogo}
           >
-            <Camera className="h-3 w-3" />
+            <Camera className="h-4 w-4" />
           </Button>
         </div>
       </div>
       
-      <div className="pt-16 px-4 pb-4">
+      {/* Store Info Sections */}
+      <div className="mt-24 pt-16">
         {/* Store Name */}
-        <div className="text-center font-medium text-lg mb-6 mt-2">
+        <div className="text-center font-medium text-xl mb-6">
           Store Name
         </div>
         
-        {/* Store Link */}
-        <div className="flex justify-between items-center mb-4">
+        {/* Copy Store Link */}
+        <div className="flex justify-between items-center px-4 py-3 bg-white border-b">
           <div className="flex items-center">
-            <LinkIcon className="h-4 w-4 mr-2" />
-            <span className="text-sm">Copy Store link</span>
+            <MapPin className="h-5 w-5 mr-2" />
+            <span>Address</span>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8"
-            onClick={handleCopyStoreLink}
-          >
-            <span className="text-sm text-whiz-green">Copy</span>
-          </Button>
         </div>
         
-        {/* Address */}
-        <div className="flex justify-between items-center mb-4">
+        {/* Copy Store Link */}
+        <div className="flex justify-between items-center px-4 py-3 bg-white border-b">
           <div className="flex items-center">
-            <MapPin className="h-4 w-4 mr-2" />
-            <span className="text-sm">Address</span>
+            <span>Copy Store link</span>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8"
-            onClick={handleAddAddress}
-          >
-            <span className="text-sm text-whiz-green">Add</span>
-          </Button>
+          <Link className="h-5 w-5" onClick={handleCopyStoreLink} />
         </div>
         
-        {/* Store Status */}
-        <div className="flex justify-between items-center mb-2">
+        {/* Status */}
+        <div className="flex justify-between items-center px-4 py-3 bg-white">
+          <span>Status</span>
           <div className="flex items-center">
-            <span className="text-sm">Status</span>
-          </div>
-          <div className="flex items-center">
-            <span className="text-xs mr-2">{isStoreActive ? "Active" : "Inactive"}</span>
-            <div className={`h-4 w-4 rounded-full ${isStoreActive ? "bg-whiz-green" : "bg-whiz-red"}`}></div>
+            <div className={`h-6 w-6 rounded-full ${isStoreActive ? "bg-whiz-green" : "bg-whiz-red"}`}></div>
           </div>
         </div>
       </div>

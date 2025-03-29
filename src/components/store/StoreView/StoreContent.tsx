@@ -1,10 +1,8 @@
 
 import React, { useState } from 'react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Package, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
 
 interface Product {
   id: number;
@@ -39,7 +37,7 @@ const StoreContent: React.FC<StoreContentProps> = ({
   return (
     <>
       {/* Categories */}
-      <div className="p-2 overflow-x-auto">
+      <div className="px-2 py-4 overflow-x-auto bg-white">
         <div className="flex space-x-2">
           {categories.map(category => (
             <Badge 
@@ -59,14 +57,14 @@ const StoreContent: React.FC<StoreContentProps> = ({
       </div>
       
       {/* Products */}
-      <div className="p-2">
+      <div className="p-2 bg-gray-100">
         {mockProducts.map(product => (
           <div 
             key={product.id} 
-            className="bg-gray-50 rounded-md p-3 mb-3 flex justify-between items-center"
+            className="bg-white rounded-md p-3 mb-3 flex justify-between items-center"
           >
             <div className="flex items-center">
-              <div className="h-12 w-12 bg-white rounded-md flex items-center justify-center mr-3">
+              <div className="h-12 w-12 bg-gray-100 rounded-md flex items-center justify-center mr-3">
                 <Package className="h-6 w-6 text-gray-400" />
               </div>
               <div>
@@ -90,7 +88,7 @@ const StoreContent: React.FC<StoreContentProps> = ({
         {/* Add More Products */}
         <Button 
           variant="ghost" 
-          className="w-full py-6 bg-gray-50 flex items-center justify-center"
+          className="w-full py-6 bg-white flex items-center justify-center"
           onClick={handleAddProducts}
         >
           <Plus className="h-5 w-5 mr-2" />

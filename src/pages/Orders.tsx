@@ -7,12 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getOrders, Order } from '@/services/orderService';
 import OrdersList from '@/components/OrdersList';
+import OrderAnalytics from '@/components/OrderAnalytics';
 import BottomNav from '@/components/BottomNav';
 
 const Orders: React.FC = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>(getOrders());
   const [searchQuery, setSearchQuery] = useState('');
+  const [showAnalytics, setShowAnalytics] = useState(true);
   
   const filteredOrders = orders.filter(order => 
     order.id.toString().includes(searchQuery)
@@ -33,8 +35,24 @@ const Orders: React.FC = () => {
         <h1 className="font-medium text-lg ml-2">Order History</h1>
       </div>
       
-      {/* Search & Filter */}
+      {/* Analytics Toggle */}
       <div className="p-4">
+        <Button
+          variant="outline"
+          className="w-full mb-4"
+          onClick={() => setShowAnalytics(!showAnalytics)}
+        >
+          {showAnalytics ? 'Hide Analytics' : 'Show Analytics'}
+        </Button>
+        
+        {/* Analytics Section */}
+        {showAnalytics && (
+          <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+            <OrderAnalytics orders={orders} />
+          </div>
+        )}
+        
+        {/* Search & Filter */}
         <div className="flex gap-2 mb-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
@@ -79,7 +97,7 @@ const Orders: React.FC = () => {
           
           <TabsContent value="pending" className="mt-4">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              <OrdersList orders={pendingOrders} onStatusChange={() => setOrders(getOrders())} />
+              <OrdersList orders={pendingOrders} onStatusChange={() => setOrders(getOrders())} showOnlyPending={true} />
             </div>
           </TabsContent>
           

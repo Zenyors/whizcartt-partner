@@ -5,6 +5,7 @@ export interface Order {
   amount: number;
   status: 'pending' | 'accepted' | 'denied' | 'completed';
   timestamp: Date;
+  reason?: string;
 }
 
 export interface DashboardStats {
@@ -38,6 +39,21 @@ const mockOrders: Order[] = [
     amount: 78.25,
     status: 'pending',
     timestamp: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
+  },
+  {
+    id: 'GHI101',
+    totalItems: 2,
+    amount: 25.99,
+    status: 'completed',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
+  },
+  {
+    id: 'JKL112',
+    totalItems: 4,
+    amount: 67.50,
+    status: 'denied',
+    timestamp: new Date(Date.now() - 1000 * 60 * 120), // 2 hours ago
+    reason: 'Items out of stock'
   }
 ];
 
@@ -60,10 +76,14 @@ export const getStats = (): DashboardStats => {
 
 export const updateOrderStatus = (
   orderId: string, 
-  status: 'accepted' | 'denied'
+  status: 'accepted' | 'denied',
+  reason?: string
 ): void => {
   const orderIndex = mockOrders.findIndex(order => order.id === orderId);
   if (orderIndex !== -1) {
     mockOrders[orderIndex].status = status;
+    if (status === 'denied' && reason) {
+      mockOrders[orderIndex].reason = reason;
+    }
   }
 };

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line, CartesianGrid } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend, LineChart, Line, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { Order } from '@/services/orderService';
 import { ChartContainer, ChartTooltipContent, ChartLegendContent } from '@/components/ui/chart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -79,23 +79,25 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({ orders }) => {
                   delivered: { color: '#e91e63' }
                 }}
               >
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<ChartTooltipContent />} />
-                  <Legend content={<ChartLegendContent />} />
-                </PieChart>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<ChartTooltipContent />} />
+                    <Legend content={<ChartLegendContent />} />
+                  </PieChart>
+                </ResponsiveContainer>
               </ChartContainer>
             </div>
           </CardContent>
@@ -112,12 +114,14 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({ orders }) => {
                   orders: { color: '#0088FE' },
                 }}
               >
-                <BarChart data={ordersByCategory}>
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="orders" fill="#0088FE" />
-                </BarChart>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={ordersByCategory}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="orders" fill="#0088FE" />
+                  </BarChart>
+                </ResponsiveContainer>
               </ChartContainer>
             </div>
           </CardContent>
@@ -136,13 +140,15 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({ orders }) => {
                 orders: { color: '#0088FE' },
               }}
             >
-              <LineChart data={timeSeriesData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip content={<ChartTooltipContent />} />
-                <Line type="monotone" dataKey="orders" stroke="#0088FE" />
-              </LineChart>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={timeSeriesData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip content={<ChartTooltipContent />} />
+                  <Line type="monotone" dataKey="orders" stroke="#0088FE" />
+                </LineChart>
+              </ResponsiveContainer>
             </ChartContainer>
           </div>
         </CardContent>
@@ -163,15 +169,17 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({ orders }) => {
                   returningCustomers: { color: '#00C49F' },
                 }}
               >
-                <BarChart data={customerRetentionData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip content={<ChartTooltipContent />} />
-                  <Legend />
-                  <Bar dataKey="newCustomers" fill="#0088FE" name="New Customers" />
-                  <Bar dataKey="returningCustomers" fill="#00C49F" name="Returning Customers" />
-                </BarChart>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={customerRetentionData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip content={<ChartTooltipContent />} />
+                    <Legend />
+                    <Bar dataKey="newCustomers" fill="#0088FE" name="New Customers" />
+                    <Bar dataKey="returningCustomers" fill="#00C49F" name="Returning Customers" />
+                  </BarChart>
+                </ResponsiveContainer>
               </ChartContainer>
             </div>
           </CardContent>

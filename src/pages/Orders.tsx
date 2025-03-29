@@ -9,6 +9,7 @@ import { getOrders, Order } from '@/services/orderService';
 import OrdersList from '@/components/OrdersList';
 import OrderAnalytics from '@/components/OrderAnalytics';
 import BottomNav from '@/components/BottomNav';
+import { Badge } from '@/components/ui/badge';
 
 const Orders: React.FC = () => {
   const navigate = useNavigate();
@@ -72,30 +73,30 @@ const Orders: React.FC = () => {
         
         {/* Tabs */}
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="all">
-              All
-              <span className="ml-1 text-xs">({filteredOrders.length})</span>
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 gap-1">
+            <TabsTrigger value="all" className="flex flex-col items-center px-2 py-1">
+              <span>All</span>
+              <Badge variant="secondary" className="mt-1">{filteredOrders.length}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="pending">
-              Pending
-              <span className="ml-1 text-xs">({pendingOrders.length})</span>
+            <TabsTrigger value="pending" className="flex flex-col items-center px-2 py-1">
+              <span>Pending</span>
+              <Badge variant="secondary" className="mt-1">{pendingOrders.length}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="accepted">
-              Accepted
-              <span className="ml-1 text-xs">({acceptedOrders.length})</span>
+            <TabsTrigger value="accepted" className="flex flex-col items-center px-2 py-1">
+              <span>Accepted</span>
+              <Badge variant="secondary" className="mt-1">{acceptedOrders.length}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="dispatched">
-              Dispatched
-              <span className="ml-1 text-xs">({dispatchedOrders.length})</span>
+            <TabsTrigger value="dispatched" className="flex flex-col items-center px-2 py-1">
+              <span>Dispatched</span>
+              <Badge variant="secondary" className="mt-1">{dispatchedOrders.length}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="delivered">
-              Delivered
-              <span className="ml-1 text-xs">({deliveredOrders.length})</span>
+            <TabsTrigger value="delivered" className="flex flex-col items-center px-2 py-1">
+              <span>Delivered</span>
+              <Badge variant="secondary" className="mt-1">{deliveredOrders.length}</Badge>
             </TabsTrigger>
-            <TabsTrigger value="completed">
-              Completed
-              <span className="ml-1 text-xs">({completedOrders.length})</span>
+            <TabsTrigger value="completed" className="flex flex-col items-center px-2 py-1">
+              <span>Completed</span>
+              <Badge variant="secondary" className="mt-1">{completedOrders.length}</Badge>
             </TabsTrigger>
           </TabsList>
           

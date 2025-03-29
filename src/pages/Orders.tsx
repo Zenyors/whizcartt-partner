@@ -17,29 +17,29 @@ const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>(getOrders());
   const [searchQuery, setSearchQuery] = useState('');
   const [showAnalytics, setShowAnalytics] = useState(true);
-  const [activeTab, setActiveTab] = useState('accepted');
+  const [activeTab, setActiveTab] = useState('all');
   
   const filteredOrders = orders.filter(order => 
     order.id.toString().includes(searchQuery)
   );
   
-  const pendingOrders = filteredOrders.filter(order => order.status === 'pending');
+  const pendingOrders = filteredOrders.filter(order => order.status === 'delivered');
   const completedOrders = filteredOrders.filter(order => order.status === 'completed');
   const deniedOrders = filteredOrders.filter(order => order.status === 'denied');
-  const acceptedOrders = filteredOrders.filter(order => order.status === 'accepted');
+  const acceptedOrders = filteredOrders.filter(order => order.status === 'pending');
   const dispatchedOrders = filteredOrders.filter(order => order.status === 'dispatched');
-  const deliveredOrders = filteredOrders.filter(order => order.status === 'delivered');
+  const allOrders = filteredOrders;
 
   // Create arrays of order statuses for the grid layout
   const orderStatusRow1 = [
+    { label: 'All Orders', count: allOrders.length, value: 'all' },
     { label: 'Accepted', count: acceptedOrders.length, value: 'accepted' },
-    { label: 'Pending', count: pendingOrders.length, value: 'pending' },
     { label: 'Denied', count: deniedOrders.length, value: 'denied' },
   ];
   
   const orderStatusRow2 = [
     { label: 'Dispatched', count: dispatchedOrders.length, value: 'dispatched' },
-    { label: 'Delivered', count: deliveredOrders.length, value: 'delivered' },
+    { label: 'Pending', count: pendingOrders.length, value: 'pending' },
     { label: 'Completed', count: completedOrders.length, value: 'completed' },
   ];
 
@@ -123,23 +123,23 @@ const Orders: React.FC = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="hidden">
             {/* Hidden but kept for functionality */}
+            <TabsTrigger value="all">All Orders</TabsTrigger>
             <TabsTrigger value="accepted">Accepted</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
             <TabsTrigger value="denied">Denied</TabsTrigger>
             <TabsTrigger value="dispatched">Dispatched</TabsTrigger>
-            <TabsTrigger value="delivered">Delivered</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
             <TabsTrigger value="completed">Completed</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="accepted" className="mt-0">
+          <TabsContent value="all" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              <OrdersList orders={acceptedOrders} onStatusChange={() => setOrders(getOrders())} />
+              <OrdersList orders={allOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>
           </TabsContent>
           
-          <TabsContent value="pending" className="mt-0">
+          <TabsContent value="accepted" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              <OrdersList orders={pendingOrders} onStatusChange={() => setOrders(getOrders())} showOnlyPending={true} />
+              <OrdersList orders={acceptedOrders} onStatusChange={() => setOrders(getOrders())} showOnlyPending={true} />
             </div>
           </TabsContent>
           
@@ -155,9 +155,9 @@ const Orders: React.FC = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="delivered" className="mt-0">
+          <TabsContent value="pending" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              <OrdersList orders={deliveredOrders} onStatusChange={() => setOrders(getOrders())} />
+              <OrdersList orders={pendingOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>
           </TabsContent>
           

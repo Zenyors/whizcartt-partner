@@ -32,10 +32,18 @@ export const useNotificationService = () => {
     });
   };
 
+  const notifyAdCreationNeeded = () => {
+    toast({
+      title: "Create an Ad!",
+      description: "Boost your sales by reaching more customers with targeted ads",
+    });
+  };
+
   return {
     notifyStoreLinkCopied,
     notifyStoreStatusChanged,
     notifyStoreUpdated,
-    notifyProductAction
+    notifyProductAction,
+    notifyAdCreationNeeded
   };
 };

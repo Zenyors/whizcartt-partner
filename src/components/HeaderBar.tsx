@@ -19,8 +19,8 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
   
   const handleNotification = () => {
     toast({
-      title: "Notifications",
-      description: "You have no new notifications",
+      title: "Boost Your Sales!",
+      description: "Create an ad to reach more customers and increase your sales",
     });
   };
   
@@ -55,7 +55,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
             className="rounded-full"
             onClick={handleNotification}
           >
-            <Bell className="text-gray-600" />
+            <Bell className="text-amber-400" />
           </Button>
           <Button 
             variant="ghost" 

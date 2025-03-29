@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CreditCard, Banknote, BadgeDollarSign, Heart } from 'lucide-react';
+import { ArrowRight, CreditCard, Banknote, BadgeDollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const CreditCardOffers: React.FC = () => {
@@ -69,12 +69,6 @@ const CreditCardOffers: React.FC = () => {
             </div>
             <ArrowRight className="h-4 w-4 text-gray-400" />
           </div>
-        </div>
-        
-        <div className="flex items-center justify-center py-2 border-t border-gray-100">
-          <p className="text-xs text-gray-400 flex items-center">
-            Made in Northeast India <Heart className="h-3 w-3 ml-1 text-red-400" fill="currentColor" />
-          </p>
         </div>
       </CardContent>
     </Card>

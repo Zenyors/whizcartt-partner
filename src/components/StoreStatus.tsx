@@ -92,7 +92,7 @@ const StoreStatus: React.FC<StoreStatusProps> = ({ initialStatus = false }) => {
               onClick={handleAddAdvertisement}
             >
               <BarChart size={16} />
-              Add
+              Ads
             </Button>
           </div>
         </div>

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, PlusCircle, CreditCard, Download, AlertCircle } from 'lucide-react';
+import { ArrowLeft, PlusCircle, CreditCard, Download, AlertCircle, Smartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -34,6 +34,13 @@ interface Transaction {
   status: 'completed' | 'pending' | 'failed';
 }
 
+interface PaymentMethod {
+  id: string;
+  type: 'bank' | 'upi';
+  name: string;
+  details: string;
+}
+
 const mockTransactions: Transaction[] = [
   { id: 'TRX001', date: '2023-05-15', amount: 125.50, type: 'credit', description: 'Order #ORD123', status: 'completed' },
   { id: 'TRX002', date: '2023-05-14', amount: 75.25, type: 'credit', description: 'Order #ORD456', status: 'completed' },
@@ -52,26 +59,61 @@ const withdrawalFormSchema = z.object({
   accountNumber: z.string().min(1, { message: "Account number is required" }),
 });
 
+// Add amount form schema
+const addAmountFormSchema = z.object({
+  amount: z.string()
+    .refine(val => !isNaN(Number(val)), { message: "Amount must be a number" })
+    .refine(val => Number(val) > 0, { message: "Amount must be greater than 0" }),
+});
+
+// Payment method form schema
+const paymentMethodFormSchema = z.object({
+  type: z.enum(['bank', 'upi']),
+  bankName: z.string().optional(),
+  accountNumber: z.string().optional(),
+  ifscCode: z.string().optional(),
+  upiId: z.string().optional(),
+});
+
 const Payments: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
   const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
   const [addPaymentDialogOpen, setAddPaymentDialogOpen] = useState(false);
+  const [addAmountDialogOpen, setAddAmountDialogOpen] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
+    { id: '1', type: 'bank', name: 'Bank Account', details: 'XXXX XXXX XXXX 4321' }
+  ]);
+  const [selectedPaymentMethodType, setSelectedPaymentMethodType] = useState<'bank' | 'upi'>('bank');
   
   const totalEarnings = transactions
     .filter(t => t.status === 'completed')
     .reduce((sum, t) => sum + (t.type === 'credit' ? t.amount : -t.amount), 0);
   
-  const pendingEarnings = transactions
-    .filter(t => t.status === 'pending')
-    .reduce((sum, t) => sum + (t.type === 'credit' ? t.amount : -t.amount), 0);
-  
-  const form = useForm<z.infer<typeof withdrawalFormSchema>>({
+  const withdrawForm = useForm<z.infer<typeof withdrawalFormSchema>>({
     resolver: zodResolver(withdrawalFormSchema),
     defaultValues: {
       amount: "",
       accountNumber: "",
+    },
+  });
+
+  const addAmountForm = useForm<z.infer<typeof addAmountFormSchema>>({
+    resolver: zodResolver(addAmountFormSchema),
+    defaultValues: {
+      amount: "",
+    },
+  });
+
+  const paymentMethodForm = useForm<z.infer<typeof paymentMethodFormSchema>>({
+    resolver: zodResolver(paymentMethodFormSchema),
+    defaultValues: {
+      type: 'bank',
+      bankName: "",
+      accountNumber: "",
+      ifscCode: "",
+      upiId: "",
     },
   });
 
@@ -81,6 +123,10 @@ const Payments: React.FC = () => {
   
   const handleWithdraw = () => {
     setWithdrawDialogOpen(true);
+  };
+  
+  const handleAddAmount = () => {
+    setAddAmountDialogOpen(true);
   };
   
   const handleDownloadStatement = () => {
@@ -106,15 +152,58 @@ const Payments: React.FC = () => {
     });
     
     setWithdrawDialogOpen(false);
-    form.reset();
+    withdrawForm.reset();
   };
 
-  const handleAddNewCard = () => {
+  const onAddAmountSubmit = (values: z.infer<typeof addAmountFormSchema>) => {
+    // Add a new transaction for the added amount
+    const newTransaction: Transaction = {
+      id: `TRX${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
+      date: new Date().toISOString().split('T')[0],
+      amount: Number(values.amount),
+      type: 'credit',
+      description: 'Added to Balance',
+      status: 'completed',
+    };
+    
+    setTransactions([newTransaction, ...transactions]);
+    
+    toast({
+      title: "Amount Added",
+      description: `₹${values.amount} has been added to your account balance.`,
+    });
+    
+    setAddAmountDialogOpen(false);
+    addAmountForm.reset();
+  };
+
+  const handleAddNewPaymentMethod = (data: z.infer<typeof paymentMethodFormSchema>) => {
+    let newPaymentMethod: PaymentMethod;
+    
+    if (data.type === 'bank') {
+      newPaymentMethod = {
+        id: `pm-${Date.now()}`,
+        type: 'bank',
+        name: data.bankName || 'Bank Account',
+        details: `${data.accountNumber?.substring(0, 4) || 'XXXX'} XXXX XXXX ${data.accountNumber?.slice(-4) || 'XXXX'}`
+      };
+    } else {
+      newPaymentMethod = {
+        id: `pm-${Date.now()}`,
+        type: 'upi',
+        name: 'UPI ID',
+        details: data.upiId || 'example@upi'
+      };
+    }
+    
+    setPaymentMethods([...paymentMethods, newPaymentMethod]);
+    
     toast({
       title: "Payment Method Added",
       description: "Your new payment method has been successfully added.",
     });
     setAddPaymentDialogOpen(false);
+    paymentMethodForm.reset();
   };
 
   return (
@@ -137,11 +226,6 @@ const Payments: React.FC = () => {
           <CardContent>
             <div className="text-3xl font-bold">₹{totalEarnings.toFixed(2)}</div>
             
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <StatBox value={transactions.filter(t => t.type === 'credit' && t.status === 'completed').length} label="Payments" />
-              <StatBox value={pendingEarnings} label="Pending" />
-            </div>
-            
             <div className="flex space-x-3 mt-4">
               <Button 
                 className="flex-1" 
@@ -150,11 +234,22 @@ const Payments: React.FC = () => {
               >
                 Withdraw Funds
               </Button>
+              <Button 
+                variant="outline" 
+                className="flex-1" 
+                onClick={handleAddAmount}
+              >
+                Add Amount
+              </Button>
+            </div>
+            
+            <div className="flex space-x-3 mt-3">
               <Button variant="outline" className="flex-1" onClick={handleDownloadStatement}>
                 <Download className="h-4 w-4 mr-2" />
                 Statement
               </Button>
             </div>
+            
             {totalEarnings < 500 && (
               <div className="flex items-center mt-2 text-amber-600 text-sm">
                 <AlertCircle className="h-4 w-4 mr-1" />
@@ -175,19 +270,25 @@ const Payments: React.FC = () => {
           </Button>
         </div>
         
-        <Card className="mb-4">
-          <CardContent className="p-3">
-            <div className="flex items-center">
-              <div className="bg-gray-100 p-2 rounded-md mr-3">
-                <CreditCard className="h-5 w-5" />
+        {paymentMethods.map(method => (
+          <Card key={method.id} className="mb-4">
+            <CardContent className="p-3">
+              <div className="flex items-center">
+                <div className="bg-gray-100 p-2 rounded-md mr-3">
+                  {method.type === 'bank' ? (
+                    <CreditCard className="h-5 w-5" />
+                  ) : (
+                    <Smartphone className="h-5 w-5" />
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium">{method.name}</p>
+                  <p className="text-sm text-gray-500">{method.details}</p>
+                </div>
               </div>
-              <div>
-                <p className="font-medium">Bank Account</p>
-                <p className="text-sm text-gray-500">XXXX XXXX XXXX 4321</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ))}
       </div>
       
       {/* Transactions */}
@@ -231,10 +332,10 @@ const Payments: React.FC = () => {
               Available balance: ₹{totalEarnings.toFixed(2)}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onWithdrawSubmit)} className="space-y-4">
+          <Form {...withdrawForm}>
+            <form onSubmit={withdrawForm.handleSubmit(onWithdrawSubmit)} className="space-y-4">
               <FormField
-                control={form.control}
+                control={withdrawForm.control}
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
@@ -247,7 +348,7 @@ const Payments: React.FC = () => {
                 )}
               />
               <FormField
-                control={form.control}
+                control={withdrawForm.control}
                 name="accountNumber"
                 render={({ field }) => (
                   <FormItem>
@@ -268,6 +369,39 @@ const Payments: React.FC = () => {
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Add Amount Dialog */}
+      <AlertDialog open={addAmountDialogOpen} onOpenChange={setAddAmountDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Add Amount</AlertDialogTitle>
+            <AlertDialogDescription>
+              Enter the amount you'd like to add to your account balance.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Form {...addAmountForm}>
+            <form onSubmit={addAmountForm.handleSubmit(onAddAmountSubmit)} className="space-y-4">
+              <FormField
+                control={addAmountForm.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amount (₹)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter amount" {...field} type="number" min="1" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction type="submit">Add Amount</AlertDialogAction>
+              </AlertDialogFooter>
+            </form>
+          </Form>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Add Payment Method Dialog */}
       <AlertDialog open={addPaymentDialogOpen} onOpenChange={setAddPaymentDialogOpen}>
         <AlertDialogContent>
@@ -277,31 +411,100 @@ const Payments: React.FC = () => {
               Enter your payment details to add a new payment method.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="account-type">Account Type</Label>
-              <div className="flex space-x-2">
-                <Button variant="outline" className="flex-1 bg-blue-50 border-blue-300">Bank Account</Button>
-                <Button variant="outline" className="flex-1">UPI</Button>
+          <Form {...paymentMethodForm}>
+            <form onSubmit={paymentMethodForm.handleSubmit(handleAddNewPaymentMethod)} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="account-type">Account Type</Label>
+                <div className="flex space-x-2">
+                  <Button 
+                    type="button"
+                    variant="outline" 
+                    className={`flex-1 ${selectedPaymentMethodType === 'bank' ? 'bg-blue-50 border-blue-300' : ''}`}
+                    onClick={() => {
+                      setSelectedPaymentMethodType('bank');
+                      paymentMethodForm.setValue('type', 'bank');
+                    }}
+                  >
+                    Bank Account
+                  </Button>
+                  <Button 
+                    type="button"
+                    variant="outline" 
+                    className={`flex-1 ${selectedPaymentMethodType === 'upi' ? 'bg-blue-50 border-blue-300' : ''}`}
+                    onClick={() => {
+                      setSelectedPaymentMethodType('upi');
+                      paymentMethodForm.setValue('type', 'upi');
+                    }}
+                  >
+                    UPI
+                  </Button>
+                </div>
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="bank-name">Bank Name</Label>
-              <Input id="bank-name" placeholder="Enter bank name" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="account-number">Account Number</Label>
-              <Input id="account-number" placeholder="Enter account number" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="ifsc-code">IFSC Code</Label>
-              <Input id="ifsc-code" placeholder="Enter IFSC code" />
-            </div>
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleAddNewCard}>Add Payment Method</AlertDialogAction>
-          </AlertDialogFooter>
+              
+              {selectedPaymentMethodType === 'bank' ? (
+                <>
+                  <FormField
+                    control={paymentMethodForm.control}
+                    name="bankName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Bank Name</FormLabel>
+                        <FormControl>
+                          <Input id="bank-name" placeholder="Enter bank name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={paymentMethodForm.control}
+                    name="accountNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Account Number</FormLabel>
+                        <FormControl>
+                          <Input id="account-number" placeholder="Enter account number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={paymentMethodForm.control}
+                    name="ifscCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>IFSC Code</FormLabel>
+                        <FormControl>
+                          <Input id="ifsc-code" placeholder="Enter IFSC code" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              ) : (
+                <FormField
+                  control={paymentMethodForm.control}
+                  name="upiId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>UPI ID</FormLabel>
+                      <FormControl>
+                        <Input id="upi-id" placeholder="Enter UPI ID (e.g. name@upi)" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction type="submit">Add Payment Method</AlertDialogAction>
+              </AlertDialogFooter>
+            </form>
+          </Form>
         </AlertDialogContent>
       </AlertDialog>
       

@@ -2,38 +2,11 @@
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
-
-export interface ProductFormData {
-  name: string;
-  price: string;
-  stock: number;
-  description: string;
-  categories: string[];
-  discount: {
-    enabled: boolean;
-    type: 'percentage' | 'fixed';
-    amount: string;
-  };
-  attributes: Array<{
-    name: string;
-    value: string;
-  }>;
-  variations: Array<{
-    name: string;
-    options: string[];
-  }>;
-  expiryDate: string;
-  scheduledTime: string;
-}
-
-export interface ExpandedSections {
-  attributes: boolean;
-  discount: boolean;
-  categories: boolean;
-  variations: boolean;
-  expiryDate: boolean;
-  scheduledTime: boolean;
-}
+import { ProductFormData, ExpandedSections } from '@/types/product';
+import { useProductAttributes } from './useProductAttributes';
+import { useProductCategories } from './useProductCategories';
+import { useProductDiscount } from './useProductDiscount';
+import { useProductVariations } from './useProductVariations';
 
 export function useProductForm() {
   const navigate = useNavigate();
@@ -70,6 +43,12 @@ export function useProductForm() {
   // Images state
   const [productImages, setProductImages] = useState<string[]>([]);
 
+  // Import specialized hooks
+  const attributeHandlers = useProductAttributes(formData, setFormData);
+  const categoryHandlers = useProductCategories(formData, setFormData);
+  const discountHandlers = useProductDiscount(formData, setFormData);
+  const variationHandlers = useProductVariations(formData, setFormData);
+
   const toggleSection = (section: keyof ExpandedSections) => {
     setExpandedSections({
       ...expandedSections,
@@ -103,130 +82,6 @@ export function useProductForm() {
 
   const handleCancel = () => {
     navigate(-1);
-  };
-
-  // Add a custom attribute
-  const addAttribute = () => {
-    setFormData({
-      ...formData,
-      attributes: [...formData.attributes, { name: '', value: '' }]
-    });
-  };
-
-  // Update an attribute
-  const updateAttribute = (index: number, field: 'name' | 'value', value: string) => {
-    const updatedAttributes = [...formData.attributes];
-    updatedAttributes[index][field] = value;
-    setFormData({
-      ...formData,
-      attributes: updatedAttributes
-    });
-  };
-
-  // Remove an attribute
-  const removeAttribute = (index: number) => {
-    const updatedAttributes = formData.attributes.filter((_, i) => i !== index);
-    setFormData({
-      ...formData,
-      attributes: updatedAttributes
-    });
-  };
-
-  // Add a category
-  const addCategory = (category: string) => {
-    if (!formData.categories.includes(category) && category.trim() !== '') {
-      setFormData({
-        ...formData,
-        categories: [...formData.categories, category]
-      });
-    }
-  };
-
-  // Remove a category
-  const removeCategory = (category: string) => {
-    setFormData({
-      ...formData,
-      categories: formData.categories.filter(c => c !== category)
-    });
-  };
-
-  // Toggle discount
-  const toggleDiscount = () => {
-    setFormData({
-      ...formData,
-      discount: {
-        ...formData.discount,
-        enabled: !formData.discount.enabled
-      }
-    });
-  };
-
-  // Update discount
-  const updateDiscount = (field: 'type' | 'amount', value: string) => {
-    setFormData({
-      ...formData,
-      discount: {
-        ...formData.discount,
-        [field]: value
-      }
-    });
-  };
-
-  // Add a variation
-  const addVariation = () => {
-    setFormData({
-      ...formData,
-      variations: [...formData.variations, { name: '', options: [''] }]
-    });
-  };
-
-  // Update variation name
-  const updateVariationName = (index: number, name: string) => {
-    const updatedVariations = [...formData.variations];
-    updatedVariations[index].name = name;
-    setFormData({
-      ...formData,
-      variations: updatedVariations
-    });
-  };
-
-  // Add variation option
-  const addVariationOption = (variationIndex: number) => {
-    const updatedVariations = [...formData.variations];
-    updatedVariations[variationIndex].options.push('');
-    setFormData({
-      ...formData,
-      variations: updatedVariations
-    });
-  };
-
-  // Update variation option
-  const updateVariationOption = (variationIndex: number, optionIndex: number, value: string) => {
-    const updatedVariations = [...formData.variations];
-    updatedVariations[variationIndex].options[optionIndex] = value;
-    setFormData({
-      ...formData,
-      variations: updatedVariations
-    });
-  };
-
-  // Remove variation option
-  const removeVariationOption = (variationIndex: number, optionIndex: number) => {
-    const updatedVariations = [...formData.variations];
-    updatedVariations[variationIndex].options = 
-      updatedVariations[variationIndex].options.filter((_, i) => i !== optionIndex);
-    setFormData({
-      ...formData,
-      variations: updatedVariations
-    });
-  };
-
-  // Remove variation
-  const removeVariation = (index: number) => {
-    setFormData({
-      ...formData,
-      variations: formData.variations.filter((_, i) => i !== index)
-    });
   };
 
   const handleSubmit = () => {
@@ -269,19 +124,12 @@ export function useProductForm() {
     increaseStock,
     decreaseStock,
     handleCancel,
-    addAttribute,
-    updateAttribute,
-    removeAttribute,
-    addCategory,
-    removeCategory,
-    toggleDiscount,
-    updateDiscount,
-    addVariation,
-    updateVariationName,
-    addVariationOption,
-    updateVariationOption,
-    removeVariationOption,
-    removeVariation,
-    handleSubmit
+    handleSubmit,
+    ...attributeHandlers,
+    ...categoryHandlers,
+    ...discountHandlers,
+    ...variationHandlers
   };
 }
+
+export type { ProductFormData, ExpandedSections };

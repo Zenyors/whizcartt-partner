@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ProductFormData, ExpandedSections } from '@/hooks/useProductForm';
+import { ProductFormData, ExpandedSections } from '@/types/product';
 
 // Import components
 import ProductImageUpload from '@/components/product/ProductImageUpload';

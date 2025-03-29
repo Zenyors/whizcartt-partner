@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, Filter, Search } from 'lucide-react';
+import { ArrowLeft, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import OrdersList from '@/components/OrdersList';
 import OrderAnalytics from '@/components/OrderAnalytics';
 import BottomNav from '@/components/BottomNav';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 
 const Orders: React.FC = () => {
   const navigate = useNavigate();
@@ -27,6 +28,19 @@ const Orders: React.FC = () => {
   const acceptedOrders = filteredOrders.filter(order => order.status === 'accepted');
   const dispatchedOrders = filteredOrders.filter(order => order.status === 'dispatched');
   const deliveredOrders = filteredOrders.filter(order => order.status === 'delivered');
+
+  // Create arrays of order statuses for the grid layout
+  const orderStatusRow1 = [
+    { label: 'All', count: filteredOrders.length, value: 'all' },
+    { label: 'Pending', count: pendingOrders.length, value: 'pending' },
+    { label: 'Accepted', count: acceptedOrders.length, value: 'accepted' },
+  ];
+  
+  const orderStatusRow2 = [
+    { label: 'Dispatched', count: dispatchedOrders.length, value: 'dispatched' },
+    { label: 'Delivered', count: deliveredOrders.length, value: 'delivered' },
+    { label: 'Completed', count: completedOrders.length, value: 'completed' },
+  ];
 
   return (
     <div className="min-h-screen pb-20 bg-gray-50">
@@ -55,8 +69,8 @@ const Orders: React.FC = () => {
           </div>
         )}
         
-        {/* Search & Filter */}
-        <div className="flex gap-2 mb-4">
+        {/* Search */}
+        <div className="flex mb-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
             <Input 
@@ -66,71 +80,75 @@ const Orders: React.FC = () => {
               className="pl-9"
             />
           </div>
-          <Button variant="outline" size="icon">
-            <Filter className="h-4 w-4" />
-          </Button>
+        </div>
+        
+        {/* Order Status Cards - First Row */}
+        <div className="grid grid-cols-3 gap-2 mb-2">
+          {orderStatusRow1.map((status) => (
+            <Card key={status.value} className="shadow-sm">
+              <CardContent className="p-3 text-center">
+                <h3 className="text-sm font-medium">{status.label}</h3>
+                <Badge variant="secondary" className="mt-1">{status.count}</Badge>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        
+        {/* Order Status Cards - Second Row */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {orderStatusRow2.map((status) => (
+            <Card key={status.value} className="shadow-sm">
+              <CardContent className="p-3 text-center">
+                <h3 className="text-sm font-medium">{status.label}</h3>
+                <Badge variant="secondary" className="mt-1">{status.count}</Badge>
+              </CardContent>
+            </Card>
+          ))}
         </div>
         
         {/* Tabs */}
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 gap-1">
-            <TabsTrigger value="all" className="flex flex-col items-center px-2 py-1">
-              <span>All</span>
-              <Badge variant="secondary" className="mt-1">{filteredOrders.length}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="pending" className="flex flex-col items-center px-2 py-1">
-              <span>Pending</span>
-              <Badge variant="secondary" className="mt-1">{pendingOrders.length}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="accepted" className="flex flex-col items-center px-2 py-1">
-              <span>Accepted</span>
-              <Badge variant="secondary" className="mt-1">{acceptedOrders.length}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="dispatched" className="flex flex-col items-center px-2 py-1">
-              <span>Dispatched</span>
-              <Badge variant="secondary" className="mt-1">{dispatchedOrders.length}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="delivered" className="flex flex-col items-center px-2 py-1">
-              <span>Delivered</span>
-              <Badge variant="secondary" className="mt-1">{deliveredOrders.length}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="completed" className="flex flex-col items-center px-2 py-1">
-              <span>Completed</span>
-              <Badge variant="secondary" className="mt-1">{completedOrders.length}</Badge>
-            </TabsTrigger>
+          <TabsList className="hidden">
+            {/* Hidden but kept for functionality */}
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="accepted">Accepted</TabsTrigger>
+            <TabsTrigger value="dispatched">Dispatched</TabsTrigger>
+            <TabsTrigger value="delivered">Delivered</TabsTrigger>
+            <TabsTrigger value="completed">Completed</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="all" className="mt-4">
+          <TabsContent value="all" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm p-4">
               <OrdersList orders={filteredOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>
           </TabsContent>
           
-          <TabsContent value="pending" className="mt-4">
+          <TabsContent value="pending" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm p-4">
               <OrdersList orders={pendingOrders} onStatusChange={() => setOrders(getOrders())} showOnlyPending={true} />
             </div>
           </TabsContent>
           
-          <TabsContent value="accepted" className="mt-4">
+          <TabsContent value="accepted" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm p-4">
               <OrdersList orders={acceptedOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>
           </TabsContent>
           
-          <TabsContent value="dispatched" className="mt-4">
+          <TabsContent value="dispatched" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm p-4">
               <OrdersList orders={dispatchedOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>
           </TabsContent>
           
-          <TabsContent value="delivered" className="mt-4">
+          <TabsContent value="delivered" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm p-4">
               <OrdersList orders={deliveredOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>
           </TabsContent>
           
-          <TabsContent value="completed" className="mt-4">
+          <TabsContent value="completed" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm p-4">
               <OrdersList orders={completedOrders} onStatusChange={() => setOrders(getOrders())} />
             </div>

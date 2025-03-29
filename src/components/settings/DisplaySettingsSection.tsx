@@ -20,15 +20,19 @@ const DisplaySettingsSection: React.FC = () => {
       description="Customize your app experience"
     >
       <SettingsItem 
-        icon={settings.darkMode ? <Moon className="h-5 w-5 text-indigo-500" /> : <Sun className="h-5 w-5 text-amber-500" />}
+        icon={settings.darkMode 
+          ? <Moon className="h-5 w-5 text-indigo-500 dark:text-indigo-400" /> 
+          : <Sun className="h-5 w-5 text-amber-500" />
+        }
         label="Dark Mode"
+        description="Switch between light and dark themes"
         onClick={() => updateDarkMode(!settings.darkMode)}
         showChevron={false}
         addon={
           <Switch 
             checked={settings.darkMode} 
             onCheckedChange={handleDarkModeToggle} 
-            className={settings.darkMode ? "bg-indigo-500" : ""}
+            className={settings.darkMode ? "bg-indigo-500 dark:bg-indigo-600" : ""}
           />
         }
       />

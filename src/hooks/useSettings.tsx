@@ -20,7 +20,9 @@ export function useSettings() {
   // Initialize settings from localStorage or use defaults
   const [settings, setSettings] = useState<SettingsState>(() => {
     const savedSettings = localStorage.getItem('userSettings');
-    return savedSettings ? JSON.parse(savedSettings) : {
+    
+    // Default settings
+    const defaultSettings = {
       notifications: true,
       darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
       language: 'english',
@@ -37,19 +39,32 @@ export function useSettings() {
         marketingEmails: false
       }
     };
+    
+    // Use saved settings if available
+    if (savedSettings) {
+      try {
+        const parsedSettings = JSON.parse(savedSettings);
+        return { ...defaultSettings, ...parsedSettings };
+      } catch (error) {
+        console.error("Error parsing saved settings:", error);
+        return defaultSettings;
+      }
+    }
+    
+    return defaultSettings;
   });
 
-  // Apply dark mode on initial load
+  // Apply dark mode on initial load and when settings change
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', settings.darkMode);
-  }, []);
-
-  // Save settings to localStorage when they change
-  useEffect(() => {
-    localStorage.setItem('userSettings', JSON.stringify(settings));
+    // Apply dark mode class to the HTML element
+    if (settings.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
     
-    // Apply dark mode when it changes
-    document.documentElement.classList.toggle('dark', settings.darkMode);
+    // Save settings to localStorage whenever they change
+    localStorage.setItem('userSettings', JSON.stringify(settings));
   }, [settings]);
 
   const updateNotifications = (value: boolean) => {
@@ -65,15 +80,22 @@ export function useSettings() {
   const updateDarkMode = (value: boolean) => {
     setSettings(prev => ({ ...prev, darkMode: value }));
     toast({
-      title: value ? "Dark mode enabled" : "Dark mode disabled",
+      title: value ? "Dark mode enabled" : "Light mode enabled",
+      description: value 
+        ? "App theme switched to dark mode" 
+        : "App theme switched to light mode",
     });
   };
 
   const updateLanguage = (value: string) => {
     setSettings(prev => ({ ...prev, language: value }));
+    
+    // Find the language label for the toast
+    const languageLabel = settings.availableLanguages.find(lang => lang.value === value)?.label || value;
+    
     toast({
       title: "Language updated",
-      description: `Language changed to ${value}`,
+      description: `Language changed to ${languageLabel}`,
     });
   };
 
@@ -85,8 +107,16 @@ export function useSettings() {
         [key]: value
       }
     }));
+    
+    const settingLabels: Record<keyof SettingsState['privacySettings'], string> = {
+      shareData: "Share usage data",
+      storeAnalytics: "Store analytics",
+      marketingEmails: "Marketing emails"
+    };
+    
     toast({
       title: "Privacy setting updated",
+      description: `${settingLabels[key]} ${value ? 'enabled' : 'disabled'}`,
     });
   };
 

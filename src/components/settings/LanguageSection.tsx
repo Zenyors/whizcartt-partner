@@ -41,7 +41,7 @@ const LanguageSection: React.FC = () => {
               {settings.availableLanguages.map((language) => (
                 <div
                   key={language.value}
-                  className="flex items-center justify-between p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer rounded-md dark:text-white"
+                  className="flex items-center justify-between p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer rounded-md transition-colors dark:text-white"
                   onClick={() => handleLanguageSelect(language.value)}
                 >
                   <span>{language.label}</span>

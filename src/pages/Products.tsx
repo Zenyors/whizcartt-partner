@@ -50,10 +50,7 @@ const Products: React.FC = () => {
   );
   
   const handleAddProduct = () => {
-    toast({
-      title: "Add Product",
-      description: "This feature will be available soon",
-    });
+    navigate('/add-product');
   };
   
   const toggleProductStatus = (id: number) => {

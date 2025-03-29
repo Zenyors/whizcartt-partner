@@ -17,6 +17,8 @@ import Help from "./pages/Help";
 import Store from "./pages/Store";
 import StoreView from "./pages/StoreView";
 import AddProduct from "./pages/AddProduct"; // Add the new import
+import Login from "./pages/Login"; // Add Login import
+import Signup from "./pages/Signup"; // Add Signup import
 import NotFound from "./pages/NotFound";
 
 // Create the client outside of the component to avoid recreating it on every render
@@ -41,7 +43,9 @@ const App: React.FC = () => (
               <Route path="/help" element={<Help />} />
               <Route path="/store" element={<Store />} />
               <Route path="/store-view" element={<StoreView />} />
-              <Route path="/add-product" element={<AddProduct />} /> {/* Add the new route */}
+              <Route path="/add-product" element={<AddProduct />} />
+              <Route path="/login" element={<Login />} /> {/* Add Login route */}
+              <Route path="/signup" element={<Signup />} /> {/* Add Signup route */}
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

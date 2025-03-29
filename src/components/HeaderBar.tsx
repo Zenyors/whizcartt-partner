@@ -4,6 +4,7 @@ import { Bell, User, Plus, BadgeCheck } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from './ui/use-toast';
 import ProfileSidebar from './ProfileSidebar';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderBarProps {
   companyName?: string;
@@ -14,6 +15,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
 }) => {
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
   
   const handleNotification = () => {
     toast({
@@ -27,10 +29,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
   };
   
   const handleNewAction = () => {
-    toast({
-      title: "New Action",
-      description: "Add new functionality coming soon",
-    });
+    navigate('/add-product');
   };
 
   return (

@@ -212,7 +212,7 @@ const Store: React.FC = () => {
                       <span className="text-xs text-gray-500 ml-1">({product.reviewCount})</span>
                     </div>
                     <div className="flex justify-between items-center mt-2">
-                      <p className="font-medium">${product.price.toFixed(2)}</p>
+                      <p className="font-medium">₹{product.price.toFixed(2)}</p>
                       <Button variant="ghost" size="icon" className="h-6 w-6">
                         <ShoppingCart className="h-4 w-4" />
                       </Button>

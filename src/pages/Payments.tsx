@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, PlusCircle, CreditCard, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -78,7 +77,7 @@ const Payments: React.FC = () => {
             <CardDescription>Available for withdrawal</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">${totalEarnings.toFixed(2)}</div>
+            <div className="text-3xl font-bold">₹{totalEarnings.toFixed(2)}</div>
             
             <div className="grid grid-cols-2 gap-4 mt-4">
               <StatBox value={transactions.filter(t => t.type === 'credit' && t.status === 'completed').length} label="Payments" />
@@ -178,7 +177,7 @@ const TransactionItem: React.FC<{ transaction: Transaction }> = ({ transaction }
         </div>
       </div>
       <span className={`font-medium ${type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
-        {type === 'credit' ? '+' : '-'}${amount.toFixed(2)}
+        {type === 'credit' ? '+' : '-'}₹{amount.toFixed(2)}
       </span>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, Search, Filter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -109,7 +108,7 @@ const Returns: React.FC = () => {
       
       <div className="flex justify-between text-sm mb-2">
         <span className="text-gray-600">Total Refund:</span>
-        <span className="font-medium">${request.total.toFixed(2)}</span>
+        <span className="font-medium">₹{request.total.toFixed(2)}</span>
       </div>
       
       <p className="text-xs text-gray-600 mb-3">
@@ -142,7 +141,6 @@ const Returns: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20 bg-gray-50">
-      {/* Header */}
       <div className="bg-white shadow-sm p-4 flex items-center">
         <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
           <ArrowLeft className="h-5 w-5" />
@@ -150,7 +148,6 @@ const Returns: React.FC = () => {
         <h1 className="font-medium text-lg ml-2">Return & Refund</h1>
       </div>
       
-      {/* Search & Filter */}
       <div className="p-4">
         <div className="flex gap-2 mb-4">
           <div className="relative flex-1">
@@ -167,7 +164,6 @@ const Returns: React.FC = () => {
           </Button>
         </div>
         
-        {/* Tabs */}
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="all">
@@ -214,7 +210,6 @@ const Returns: React.FC = () => {
         </Tabs>
       </div>
       
-      {/* Bottom navigation */}
       <BottomNav />
     </div>
   );

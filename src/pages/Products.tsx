@@ -157,7 +157,7 @@ const Products: React.FC = () => {
                       </DropdownMenu>
                     </div>
                     <p className="text-sm text-gray-500">{product.category}</p>
-                    <p className="font-medium mt-1">${product.price.toFixed(2)}</p>
+                    <p className="font-medium mt-1">₹{product.price.toFixed(2)}</p>
                     <div className="flex justify-between items-center mt-1">
                       <span className="text-xs text-gray-500">Stock: {product.stock}</span>
                       <Badge variant={product.isActive ? "default" : "secondary"}>

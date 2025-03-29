@@ -39,7 +39,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order, onStatusChange }) => {
       <p className="font-semibold">Order Id: {order.id}</p>
       <div className="flex justify-between text-sm text-gray-600">
         <p>Total Items: {order.totalItems}</p>
-        <p>Amount: ${order.amount.toFixed(2)}</p>
+        <p>Amount: ₹{order.amount.toFixed(2)}</p>
       </div>
       
       <div className="flex justify-between mt-3">

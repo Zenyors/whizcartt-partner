@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, Eye, Edit, Trash2, BarChart3, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -139,7 +138,7 @@ const Advertisements: React.FC = () => {
               <div className="mt-3">
                 <div className="flex justify-between text-sm mb-1">
                   <span>Budget Spent:</span>
-                  <span>${ad.spent} / ${ad.budget}</span>
+                  <span>₹{ad.spent} / ₹{ad.budget}</span>
                 </div>
                 <Progress value={budgetProgress} className="h-2" />
               </div>
@@ -206,7 +205,6 @@ const Advertisements: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20 bg-gray-50">
-      {/* Header */}
       <div className="bg-white shadow-sm p-4 flex items-center justify-between">
         <div className="flex items-center">
           <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
@@ -220,7 +218,6 @@ const Advertisements: React.FC = () => {
         </Button>
       </div>
       
-      {/* Tabs */}
       <div className="p-4">
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
@@ -268,7 +265,6 @@ const Advertisements: React.FC = () => {
         </Tabs>
       </div>
       
-      {/* Bottom navigation */}
       <BottomNav />
     </div>
   );

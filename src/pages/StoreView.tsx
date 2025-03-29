@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { useUser } from '@/contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import StoreViewHeader from '@/components/store/StoreView/StoreViewHeader';
 import StoreInfo from '@/components/store/StoreView/StoreInfo';
@@ -10,19 +11,13 @@ import StoreContent from '@/components/store/StoreView/StoreContent';
 const StoreView: React.FC = () => {
   const { toast } = useToast();
   const { userProfile } = useUser();
+  const navigate = useNavigate();
   const [isStoreActive, setIsStoreActive] = useState(true);
   
   const handleCopyStoreLink = () => {
     toast({
       title: "Link copied",
       description: "Store link copied to clipboard",
-    });
-  };
-  
-  const handleAddProducts = () => {
-    toast({
-      title: "Add Products",
-      description: "This feature will be available soon",
     });
   };
   
@@ -66,10 +61,7 @@ const StoreView: React.FC = () => {
         handleUploadCoverImage={handleUploadCoverImage}
       />
       
-      <StoreContent 
-        handleAddProducts={handleAddProducts}
-        handleEditProduct={handleEditProduct}
-      />
+      <StoreContent handleEditProduct={handleEditProduct} />
       
       <BottomNav />
     </div>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Package, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
   id: number;
@@ -12,15 +13,14 @@ interface Product {
 }
 
 interface StoreContentProps {
-  handleAddProducts: () => void;
   handleEditProduct: (id: number) => void;
 }
 
 const StoreContent: React.FC<StoreContentProps> = ({ 
-  handleAddProducts, 
   handleEditProduct 
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const navigate = useNavigate();
   
   const mockProducts: Product[] = [
     { id: 1, name: 'Product Name', price: 0, stock: 0 },
@@ -33,6 +33,10 @@ const StoreContent: React.FC<StoreContentProps> = ({
     { id: 'biscuits', name: 'Biscuits' },
     { id: 'masalas', name: 'Masalas' },
   ];
+
+  const handleAddProducts = () => {
+    navigate('/add-product');
+  };
 
   return (
     <>

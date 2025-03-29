@@ -11,21 +11,20 @@ import {
 import { useToast } from '@/hooks/use-toast';
 
 interface StoreLinkProps {
-  storeLink: string;
+  handleCopyStoreLink: () => void;
+  storeLink?: string;
 }
 
-const StoreLink: React.FC<StoreLinkProps> = ({ storeLink }) => {
+const StoreLink: React.FC<StoreLinkProps> = ({ 
+  handleCopyStoreLink,
+  storeLink = "https://mystore.com/store-name" 
+}) => {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(storeLink);
+    handleCopyStoreLink();
     setCopied(true);
-    
-    toast({
-      title: "Link Copied",
-      description: "Store link copied to clipboard"
-    });
     
     setTimeout(() => {
       setCopied(false);

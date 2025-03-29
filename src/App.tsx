@@ -15,6 +15,7 @@ import Settings from "./pages/Settings";
 import Advertisements from "./pages/Advertisements";
 import Help from "./pages/Help";
 import Store from "./pages/Store";
+import StoreView from "./pages/StoreView";
 import NotFound from "./pages/NotFound";
 
 // Create the client outside of the component to avoid recreating it on every render
@@ -38,6 +39,7 @@ const App: React.FC = () => (
               <Route path="/advertisements" element={<Advertisements />} />
               <Route path="/help" element={<Help />} />
               <Route path="/store" element={<Store />} />
+              <Route path="/store-view" element={<StoreView />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

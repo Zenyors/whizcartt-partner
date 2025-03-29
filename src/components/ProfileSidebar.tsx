@@ -87,7 +87,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ open, onClose }) => {
                 variant="outline" 
                 size="sm" 
                 className="text-xs" 
-                onClick={() => handleNavigation('/store')}
+                onClick={() => handleNavigation('/store-view')}
               >
                 <Store className="h-3 w-3 mr-1" />
                 View Store

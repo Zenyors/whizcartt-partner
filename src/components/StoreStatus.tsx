@@ -4,6 +4,7 @@ import { useToast } from './ui/use-toast';
 import { Button } from './ui/button';
 import { Store, Copy } from 'lucide-react';
 import { Switch } from './ui/switch';
+import { useNavigate } from 'react-router-dom';
 
 interface StoreStatusProps {
   initialStatus?: boolean;
@@ -12,6 +13,7 @@ interface StoreStatusProps {
 const StoreStatus: React.FC<StoreStatusProps> = ({ initialStatus = false }) => {
   const [isOnline, setIsOnline] = useState(initialStatus);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const toggleStatus = (checked: boolean) => {
     setIsOnline(checked);
@@ -22,10 +24,7 @@ const StoreStatus: React.FC<StoreStatusProps> = ({ initialStatus = false }) => {
   };
 
   const handleViewStore = () => {
-    toast({
-      title: "View Store",
-      description: "Store preview functionality coming soon",
-    });
+    navigate('/store-view');
   };
 
   const handleCopyLink = () => {

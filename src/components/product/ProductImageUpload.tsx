@@ -54,20 +54,23 @@ const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
           </Carousel>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <label className="bg-gray-100 aspect-square rounded-md flex flex-col items-center justify-center cursor-pointer">
-            <input 
-              type="file" 
-              accept="image/*" 
-              className="hidden" 
-              onChange={handleImageUpload}
-            />
-            <div className="rounded-full border border-gray-400 p-2 mb-2">
-              <Upload className="h-5 w-5 text-gray-500" />
-            </div>
-            <span className="text-sm text-gray-500">Add Product</span>
-          </label>
-        </div>
+        {/* Only show the upload container if there are fewer than 2 images */}
+        {productImages.length < 2 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <label className="bg-gray-100 aspect-square rounded-md flex flex-col items-center justify-center cursor-pointer">
+              <input 
+                type="file" 
+                accept="image/*" 
+                className="hidden" 
+                onChange={handleImageUpload}
+              />
+              <div className="rounded-full border border-gray-400 p-2 mb-2">
+                <Upload className="h-5 w-5 text-gray-500" />
+              </div>
+              <span className="text-sm text-gray-500">Add Product</span>
+            </label>
+          </div>
+        )}
       </div>
 
       {productImages.length > 0 && (
